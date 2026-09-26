@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>RADAR Lavoro — demo per agenzie</title>
+<link rel="icon" href="favicon.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EEF2F5; --surface:#FFFFFF; --surface-2:#F6F8FA; --ink:#0F171E; --muted:#56646F; --line:#D8E0E6;
+  --accent:#00798A; --accent-soft:rgba(0,121,138,.10); --on-accent:#FFFFFF;
+  --ok:#1E9E5A; --ok-soft:rgba(30,158,90,.12); --wait:#B8760A; --wait-soft:rgba(184,118,10,.13);
+  --no:#7C8993; --no-soft:rgba(124,137,147,.14); --err:#C23B32;
+  --scope:#060B11; --scope-line:#16303B; --cyan:#00E5FF;
+  --display:"Space Grotesk", "Segoe UI", system-ui, sans-serif;
+  --body:"Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#070B10; --surface:#0E151D; --surface-2:#121B25; --ink:#E6EDF3; --muted:#8C9CAA; --line:#1D2B38;
+    --accent:#00E5FF; --accent-soft:rgba(0,229,255,.10); --on-accent:#03181C;
+    --ok:#34D399; --ok-soft:rgba(52,211,153,.12); --wait:#FFB020; --wait-soft:rgba(255,176,32,.12);
+    --no:#6B7B88; --no-soft:rgba(107,123,136,.14); --err:#FF6B61;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#070B10; --surface:#0E151D; --surface-2:#121B25; --ink:#E6EDF3; --muted:#8C9CAA; --line:#1D2B38;
+  --accent:#00E5FF; --accent-soft:rgba(0,229,255,.10); --on-accent:#03181C;
+  --ok:#34D399; --ok-soft:rgba(52,211,153,.12); --wait:#FFB020; --wait-soft:rgba(255,176,32,.12);
+  --no:#6B7B88; --no-soft:rgba(107,123,136,.14); --err:#FF6B61;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 var(--body);-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.top{display:flex;align-items:center;gap:16px;padding:12px 20px;background:var(--surface);border-bottom:1px solid var(--line);flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px}
+.brand b{font-family:var(--display);font-weight:700;letter-spacing:.14em;font-size:18px}
+.brand b span{color:var(--accent)}
+.filiale{color:var(--muted);font-size:13px}
+.top .spacer{flex:1}
+.demo-tag{font-size:12px;color:var(--wait);background:var(--wait-soft);padding:3px 10px;border-radius:99px}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 14px;font-weight:500}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:600}
+.btn.primary:hover{filter:brightness(1.07)}
+.btn:disabled{opacity:.45;cursor:default;filter:none}
+.btn.ghost{background:transparent}
+
+.app{display:grid;grid-template-columns:280px minmax(0,1fr) 380px;gap:0;min-height:calc(100vh - 62px)}
+.col{border-right:1px solid var(--line);min-width:0}
+.col:last-child{border-right:0}
+.pad{padding:18px}
+h2{font-family:var(--display);font-size:15px;font-weight:600;margin:0 0 12px;color:var(--muted)}
+
+.req{display:block;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:12px 14px;margin-bottom:10px}
+.req.sel{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.req.coperta{border-left-color:var(--ok)}
+.req.in_corso{border-left-color:var(--wait)}
+.req .r1{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;font-weight:600}
+.req .r1 .pill{flex:none;margin-top:1px}
+.req .r2{color:var(--muted);font-size:13px;margin-top:2px}
+.pill{display:inline-block;font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:99px;white-space:nowrap}
+.pill.ricerca{color:var(--accent);background:var(--accent-soft)}
+.pill.in_corso{color:var(--wait);background:var(--wait-soft)}
+.pill.coperta{color:var(--ok);background:var(--ok-soft)}
+
+.center{display:flex;flex-direction:column;align-items:center;padding:18px 18px 24px;gap:14px;background:var(--bg)}
+.center-head{width:100%;max-width:640px}
+.center-head .t{font-family:var(--display);font-size:24px;font-weight:600;line-height:1.2;margin:0}
+.center-head .s{color:var(--muted);font-size:14px;margin-top:4px}
+.scope-wrap{position:relative;width:100%;max-width:560px;aspect-ratio:1}
+.scope{width:100%;height:100%;display:block;border-radius:50%;background:var(--scope)}
+.sweep{transform-origin:300px 300px;animation:giro 5s linear infinite}
+@keyframes giro{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion: reduce){.sweep{animation:none}}
+.w-dot{cursor:pointer}
+.w-dot circle.core{transition:r .15s}
+.w-dot:hover circle.core,.w-dot.sel circle.core{r:9}
+.legend{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;font-size:13px;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:640px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.stat b{display:block;font-family:var(--display);font-size:26px;font-weight:600;line-height:1.1}
+.stat span{font-size:12.5px;color:var(--muted)}
+.escl{width:100%;max-width:640px;font-size:13px;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.escl b{color:var(--ink);font-weight:600}
+
+.panel-title{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:10px}
+.panel-title h2{margin:0}
+.progress{font-family:var(--display);font-weight:600}
+.w{display:grid;grid-template-columns:22px 1fr auto;gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);margin-bottom:8px}
+.w.sel{border-color:var(--accent)}
+.w input{width:18px;height:18px;accent-color:var(--accent);margin:0}
+.w .n{font-weight:600;cursor:pointer;background:none;border:0;padding:0;text-align:left}
+.w .d{font-size:12.5px;color:var(--muted)}
+.state{font-size:12px;font-weight:600;padding:3px 9px;border-radius:99px;white-space:nowrap}
+.state.pronto{color:var(--accent);background:var(--accent-soft)}
+.state.inviata{color:var(--wait);background:var(--wait-soft)}
+.state.si{color:var(--ok);background:var(--ok-soft)}
+.state.no,.state.chiusa{color:var(--no);background:var(--no-soft)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 18px}
+.timer{font-size:13px;color:var(--muted);margin:-6px 0 14px}
+.timer b{color:var(--ink)}
+.done{background:var(--ok-soft);color:var(--ok);border-radius:12px;padding:12px 14px;font-weight:600;margin-bottom:16px}
+.empty{color:var(--muted);font-size:14px;border:1px dashed var(--line);border-radius:12px;padding:16px}
+
+.phone{margin:6px auto 0;width:250px;border:8px solid #1A232D;border-radius:32px;background:var(--surface-2);padding:14px 12px 16px;min-height:290px}
+.phone .notch{width:70px;height:6px;border-radius:6px;background:var(--line);margin:0 auto 12px}
+.phone .who{font-size:12px;color:var(--muted);margin-bottom:8px;text-align:center}
+.bubble{background:var(--surface);border:1px solid var(--line);border-radius:14px 14px 14px 4px;padding:10px 12px;font-size:13px;line-height:1.45}
+.phone .ans{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
+.phone .ans button{border-radius:10px;padding:9px 4px;font-size:13px;font-weight:600;border:1px solid var(--line);background:var(--surface)}
+.phone .ans .yes{background:var(--ok);border-color:var(--ok);color:#fff}
+.phone .ans button:disabled{opacity:.4;cursor:default}
+.phone .reply{margin-top:10px;margin-left:auto;width:fit-content;max-width:90%;background:var(--accent);color:var(--on-accent);border-radius:14px 14px 4px 14px;padding:8px 12px;font-size:13px}
+.phone-note{font-size:12px;color:var(--muted);text-align:center;margin-top:8px}
+
+.form{display:flex;flex-direction:column;gap:14px}
+.f label,.f .lb{display:block;font-size:13px;color:var(--muted);margin-bottom:5px;font-weight:500}
+.f select,.f textarea{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.f textarea{min-height:64px;resize:vertical}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg button{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:7px 12px;font-size:13.5px}
+.seg button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:600}
+.step{display:flex;align-items:center;gap:10px}
+.step button{width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:var(--surface);font-size:18px}
+.step output{font-family:var(--display);font-size:20px;font-weight:600;min-width:24px;text-align:center}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.chip{font-size:12px;border:1px solid var(--line);border-radius:99px;padding:2px 9px;color:var(--muted)}
+.info{font-size:12.5px;color:var(--muted)}
+
+.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:10;max-width:90vw}
+.toast.on{opacity:1}
+
+@media (max-width:1100px){.app{grid-template-columns:240px minmax(0,1fr) 340px}}
+@media (max-width:900px){
+  .app{grid-template-columns:1fr}
+  .col{border-right:0;border-bottom:1px solid var(--line)}
+  .col.list{order:1}.col.center{order:2}.col.side{order:3}
+  .list .reqs{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px}
+  .list .req{min-width:230px;margin-bottom:0}
+  .stats{grid-template-columns:repeat(3,1fr)}
+}
+@media (max-width:520px){
+  .top{padding:10px 14px;gap:10px}
+  .filiale{display:none}
+  .center-head .t{font-size:20px}
+  .stat b{font-size:22px}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="currentColor" stroke-opacity=".25" stroke-width="1.5"/><circle cx="16" cy="16" r="8.5" fill="none" stroke="currentColor" stroke-opacity=".5" stroke-width="1.5"/><circle cx="16" cy="16" r="3.2" fill="#00B8CC"/></svg>
+    <b>RADAR <span>Lavoro</span></b>
+  </div>
+  <span class="filiale">Filiale di Biella</span>
+  <span class="demo-tag">Demo con dati di prova</span>
+  <span class="spacer"></span>
+  <button class="btn ghost" id="btnReset">Ricomincia la demo</button>
+  <button class="btn primary" id="btnNuova">Nuova richiesta urgente</button>
+</header>
+
+<div class="app">
+  <aside class="col list pad">
+    <h2>Richieste</h2>
+    <div class="reqs" id="reqs"></div>
+  </aside>
+
+  <main class="col center" id="center"></main>
+
+  <aside class="col side pad" id="side"></aside>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ---------- Dati di prova ---------- */
+const COMUNI = {
+  "Biella":[45.5663,8.0530],"Cossato":[45.5710,8.1780],"Gaglianico":[45.5390,8.0760],"Candelo":[45.5450,8.1110],
+  "Vigliano Biellese":[45.5620,8.1040],"Ponderano":[45.5360,8.0570],"Sandigliano":[45.5220,8.0770],"Verrone":[45.5070,8.1210],
+  "Mongrando":[45.5250,7.9740],"Occhieppo Inferiore":[45.5560,8.0190],"Valdengo":[45.5680,8.1400],"Lessona":[45.5870,8.1960],
+  "Mottalciata":[45.5080,8.2080],"Salussola":[45.4460,8.1110],"Cavaglià":[45.4040,8.0930],"Santhià":[45.3670,8.1720],
+  "Vercelli":[45.3200,8.4190],"Masserano":[45.5960,8.2230],"Andorno Micca":[45.5990,8.0520],"Pollone":[45.5810,8.0020],
+  "Trivero":[45.6690,8.1600],"Graglia":[45.5580,7.9350],"Benna":[45.5130,8.1250],"Tollegno":[45.5870,8.0510]
+};
+const ABIL = {
+  carrelli:"Abilitazione carrelli elevatori", ple:"Abilitazione piattaforme aeree", sicurezza:"Formazione sicurezza",
+  patente_ce:"Patente CE", cqc:"Carta di qualificazione conducente", haccp:"Attestato HACCP", oss:"Qualifica OSS"
+};
+const MANSIONI = {
+  carrellista:{nome:"Carrellista", req:["carrelli","sicurezza"]},
+  magazziniere:{nome:"Magazziniere", req:["sicurezza"]},
+  autista_ce:{nome:"Autista CE", req:["patente_ce","cqc"]},
+  ple:{nome:"Operatore piattaforme aeree", req:["ple","sicurezza"]},
+  cameriere:{nome:"Cameriere di sala", req:["haccp"]},
+  oss:{nome:"OSS", req:["oss"]},
+  pulizie:{nome:"Addetto pulizie", req:["sicurezza"]}
+};
+const CLIENTI = {
+  elvo:{nome:"Magazzini Elvo", comune:"Gaglianico", settore:"Logistica"},
+  baraggia:{nome:"Trasporti Baraggia", comune:"Cossato", settore:"Trasporti"},
+  tigli:{nome:"RSA Villa dei Tigli", comune:"Candelo", settore:"Assistenza"},
+  ponte:{nome:"Trattoria del Ponte", comune:"Biella", settore:"Ristorazione"},
+  cervo:{nome:"Filatura Val Cervo", comune:"Tollegno", settore:"Industria"},
+  serra:{nome:"Edil Serra", comune:"Mongrando", settore:"Edilizia"}
+};
+const TURNI = {M:"Mattina 6-14", P:"Pomeriggio 14-22", N:"Notte 22-6", G:"Giornata 8-17"};
+const QUANDO = ["Oggi","Domani","Dopodomani"];
+const DURATE = ["1 giorno","1 settimana","1 mese","Da definire"];
+
+/* id, nome, comune, km max, mezzo, turni, disponibilità, mansioni {codice:anni}, abilitazioni {codice:giorni alla scadenza}, minuti medi di risposta, probabilità di accettare */
+const W_RAW = [
+ [1,"Marco R.","Cossato",20,"auto","MPG","subito",{carrellista:3,magazziniere:4},{carrelli:400,sicurezza:600},5,.85],
+ [2,"Elena B.","Biella",10,"pubblici","MP","subito",{cameriere:5,pulizie:2},{haccp:300,sicurezza:200},8,.7],
+ [3,"Luca M.","Vigliano Biellese",15,"auto","MPN","subito",{carrellista:1,magazziniere:2},{carrelli:-20,sicurezza:500},12,.6],
+ [4,"Giulia F.","Candelo",25,"auto","MPNG","subito",{oss:6},{oss:9999,sicurezza:100},4,.9],
+ [5,"Andrea T.","Gaglianico",10,"auto","MPNG","subito",{carrellista:5,ple:3},{carrelli:800,ple:1,sicurezza:900},3,.85],
+ [6,"Sara P.","Ponderano",8,"pubblici","MP","subito",{cameriere:2},{haccp:-5},10,.5],
+ [7,"Davide C.","Mongrando",30,"auto","MPNG","subito",{autista_ce:8,carrellista:2},{patente_ce:2000,cqc:700,carrelli:300,sicurezza:300},6,.75],
+ [8,"Francesca L.","Valdengo",12,"auto","MP","+5",{oss:3,pulizie:1},{oss:9999,sicurezza:400},15,.6],
+ [9,"Simone G.","Sandigliano",15,"auto","N","subito",{carrellista:2,magazziniere:3},{carrelli:500,sicurezza:250},7,.7],
+ [10,"Chiara D.","Occhieppo Inferiore",10,"auto","MPG","subito",{cameriere:4},{haccp:120,sicurezza:365},5,.8],
+ [11,"Matteo V.","Salussola",20,"auto","MPN","subito",{carrellista:4,ple:2},{carrelli:250,ple:400,sicurezza:500},9,.7],
+ [12,"Paolo N.","Vercelli",40,"auto","MPNG","subito",{autista_ce:12},{patente_ce:1500,cqc:30},11,.6],
+ [13,"Alessio B.","Lessona",15,"auto","MPG","subito",{magazziniere:2,pulizie:3},{sicurezza:180},6,.8],
+ [14,"Martina S.","Biella",5,"pubblici","MPNG","subito",{oss:2},{oss:9999},7,.75],
+ [15,"Roberto A.","Verrone",20,"auto","MPNG","no",{carrellista:10,ple:6},{carrelli:600,ple:600,sicurezza:600},5,.9],
+ [16,"Ivan K.","Cossato",15,"pubblici","MPN","subito",{carrellista:1,magazziniere:1},{carrelli:700,sicurezza:700},14,.5],
+ [17,"Nadia E.","Candelo",15,"auto","MP","subito",{pulizie:4,cameriere:1},{sicurezza:90,haccp:200},9,.6],
+ [18,"Fabio Z.","Masserano",25,"auto","MPNG","subito",{autista_ce:5,carrellista:3},{patente_ce:900,cqc:300,carrelli:-60,sicurezza:200},8,.7],
+ [19,"Stefania M.","Cavaglià",30,"auto","MPG","subito",{oss:8},{oss:9999,sicurezza:500},5,.85],
+ [20,"Giorgio R.","Andorno Micca",10,"auto","MP","subito",{ple:4,carrellista:2},{ple:365,carrelli:100,sicurezza:40},6,.8],
+ [21,"Omar H.","Benna",20,"auto","MPNG","subito",{carrellista:3,magazziniere:3,autista_ce:1},{carrelli:900,sicurezza:900,patente_ce:1000,cqc:500},4,.9],
+ [22,"Laura C.","Pollone",10,"auto","G","subito",{cameriere:6},{haccp:500},10,.6],
+ [23,"Emanuele F.","Trivero",25,"auto","MPN","subito",{carrellista:2},{carrelli:300,sicurezza:300},13,.5],
+ [24,"Irene T.","Mottalciata",20,"auto","MPG","+1",{magazziniere:1,pulizie:2},{sicurezza:150},8,.7],
+ [25,"Denis P.","Tollegno",12,"auto","MPNG","subito",{carrellista:6,ple:5},{carrelli:1000,ple:1000,sicurezza:1000},3,.9],
+ [26,"Valentina G.","Santhià",25,"pubblici","MP","subito",{oss:1,pulizie:2},{oss:9999,sicurezza:100},9,.6],
+ [27,"Kevin D.","Graglia",20,"auto","MPN","subito",{carrellista:1},{carrelli:200,sicurezza:-10},7,.7],
+ [28,"Beatrice N.","Gaglianico",8,"auto","MPG","subito",{cameriere:3,magazziniere:1},{haccp:250,sicurezza:250},5,.8]
+];
+const WORKERS = W_RAW.map(r => ({id:r[0], nome:r[1], comune:r[2], maxKm:r[3], mezzo:r[4], turni:r[5], disp:r[6], mansioni:r[7], abil:r[8], rispMin:r[9], acc:r[10]}));
+
+function seed(){
+  return [
+    {id:"R-104", cliente:"elvo", mansione:"carrellista", n:3, quando:1, turno:"M", durata:"1 settimana", note:"Presentarsi alle 5:45 in portineria con scarpe antinfortunistiche.", stato:"ricerca", proposte:{}, t0:null, tempo:null},
+    {id:"R-103", cliente:"baraggia", mansione:"autista_ce", n:1, quando:2, turno:"G", durata:"1 giorno", note:"Consegne in Lombardia, rientro in giornata.", stato:"ricerca", proposte:{}, t0:null, tempo:null},
+    {id:"R-102", cliente:"tigli", mansione:"oss", n:1, quando:0, turno:"N", durata:"1 giorno", note:"", stato:"coperta", proposte:{4:"si",19:"chiusa",14:"no"}, t0:null, tempo:18}
+  ];
+}
+
+let REQS = seed(), selReq = "R-104", selWorker = null, mode = "view", nextId = 105;
+let timers = [], clock = null;
+const draft = {cliente:"ponte", mansione:"cameriere", n:2, quando:0, turno:"P", durata:"1 giorno", note:""};
+
+/* ---------- Utilità ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function km(a, b){
+  const R = 6371, t = x => x * Math.PI / 180;
+  const dLat = t(b[0]-a[0]), dLng = t(b[1]-a[1]);
+  const h = Math.sin(dLat/2)**2 + Math.cos(t(a[0]))*Math.cos(t(b[0]))*Math.sin(dLng/2)**2;
+  return 2 * R * Math.asin(Math.sqrt(h)) * 1.25; /* fattore strada */
+}
+function bearing(a, b){
+  const t = x => x * Math.PI / 180;
+  const y = Math.sin(t(b[1]-a[1])) * Math.cos(t(b[0]));
+  const x = Math.cos(t(a[0]))*Math.sin(t(b[0])) - Math.sin(t(a[0]))*Math.cos(t(b[0]))*Math.cos(t(b[1]-a[1]));
+  return Math.atan2(y, x);
+}
+function fmtKm(d){ return d < 1 ? "meno di 1 km" : d.toLocaleString("it-IT", {maximumFractionDigits:1}) + " km"; }
+function toast(msg){ const t = $("#toast"); t.textContent = msg; t.classList.add("on"); clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove("on"), 2600); }
+function req(){ return REQS.find(r => r.id === selReq); }
+
+/* ---------- Motore di matching ---------- */
+function impegnato(w, r){
+  return REQS.some(x => x.id !== r.id && x.quando === r.quando && x.proposte[w.id] === "si");
+}
+function valuta(w, r){
+  const c = CLIENTI[r.cliente], m = MANSIONI[r.mansione];
+  const d = km(COMUNI[w.comune], COMUNI[c.comune]);
+  const motivi = [];
+  for (const a of m.req){
+    const g = w.abil[a];
+    if (g === undefined) motivi.push({k:"abil", t:"manca " + ABIL[a].toLowerCase()});
+    else if (g <= r.quando) motivi.push({k:"abil", t: ABIL[a] + (g < 0 ? " scaduta" : " scade prima del lavoro")});
+  }
+  if (d > w.maxKm) motivi.push({k:"dist", t:"troppo lontano (" + fmtKm(d) + ", accetta fino a " + w.maxKm + " km)"});
+  if (!w.turni.includes(r.turno)) motivi.push({k:"turno", t:"non fa il turno " + TURNI[r.turno].split(" ")[0].toLowerCase()});
+  if (r.turno === "N" && w.mezzo === "pubblici") motivi.push({k:"turno", t:"senza auto per il turno di notte"});
+  if (w.disp === "no") motivi.push({k:"disp", t:"al momento non disponibile"});
+  else if (w.disp.startsWith("+") && +w.disp.slice(1) > r.quando) motivi.push({k:"disp", t:"disponibile tra " + w.disp.slice(1) + " giorni"});
+  if (impegnato(w, r)) motivi.push({k:"disp", t:"già impegnato quel giorno"});
+  return {w, d, motivi, ok: motivi.length === 0};
+}
+function risultati(r){
+  const pool = WORKERS.filter(w => w.mansioni[r.mansione] !== undefined).map(w => valuta(w, r));
+  const ok = pool.filter(x => x.ok).sort((a, b) =>
+    (a.d - b.d) * 1 - (b.w.mansioni[r.mansione] - a.w.mansioni[r.mansione]) * 1.5 + (a.w.rispMin - b.w.rispMin) * .4);
+  return {pool, ok, esclusi: pool.filter(x => !x.ok)};
+}
+
+/* ---------- Elenco richieste ---------- */
+function disegnaRichieste(){
+  const lab = {ricerca:"Da inviare", in_corso:"Proposte inviate", coperta:"Coperta"};
+  $("#reqs").innerHTML = REQS.map(r => {
+    const c = CLIENTI[r.cliente], si = Object.values(r.proposte).filter(v => v === "si").length;
+    return `<button class="req ${r.stato}${r.id === selReq && mode === "view" ? " sel" : ""}" data-req="${r.id}">
+      <div class="r1"><span>${esc(MANSIONI[r.mansione].nome)} × ${r.n}</span><span class="pill ${r.stato}">${lab[r.stato]}</span></div>
+      <div class="r2">${esc(c.nome)}, ${esc(c.comune)}</div>
+      <div class="r2">${QUANDO[r.quando]}, ${TURNI[r.turno].toLowerCase()}${r.stato !== "ricerca" ? " · " + si + " di " + r.n + " confermati" : ""}</div>
+    </button>`;
+  }).join("");
+}
+
+/* ---------- Radar ---------- */
+const MAXKM = 32, RAD = 270;
+function disegnaCentro(){
+  const r = req(), c = CLIENTI[r.cliente], res = risultati(r), casa = COMUNI[c.comune];
+  const col = st => ({si:"var(--ok)", inviata:"var(--wait)", no:"#6B7B88", chiusa:"#6B7B88"}[st] || "#00E5FF");
+  const rings = [5,10,20,30].map(k => {
+    const rr = k / MAXKM * RAD;
+    return `<circle cx="300" cy="300" r="${rr}" fill="none" stroke="var(--scope-line)" stroke-width="1.5"/>
+            <text x="${300 + rr * .707 + 4}" y="${300 - rr * .707 - 4}" fill="#5E7C8A" font-size="17" font-family="Inter, sans-serif">${k} km</text>`;
+  }).join("");
+  const dots = res.pool.map(x => {
+    const rr = Math.min(x.d, MAXKM) / MAXKM * RAD, b = bearing(casa, COMUNI[x.w.comune]) + (x.w.id % 7 - 3) * .05;
+    const px = 300 + Math.sin(b) * Math.max(rr, 14), py = 300 - Math.cos(b) * Math.max(rr, 14);
+    const st = r.proposte[x.w.id];
+    const sel = selWorker === x.w.id ? " sel" : "";
+    if (!x.ok && !st) return `<g class="w-dot${sel}" data-w="${x.w.id}" tabindex="0" role="button" aria-label="${esc(x.w.nome)}, escluso: ${esc(x.motivi[0].t)}">
+        <circle class="core" cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="5" fill="none" stroke="#4A5A66" stroke-width="1.5"/></g>`;
+    const cc = col(st);
+    return `<g class="w-dot${sel}" data-w="${x.w.id}" tabindex="0" role="button" aria-label="${esc(x.w.nome)}, ${fmtKm(x.d)}">
+      <circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="15" fill="${cc}" opacity=".16"/>
+      <circle class="core" cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="7" fill="${cc}"/></g>`;
+  }).join("");
+  const conf = Object.values(r.proposte).filter(v => v === "si").length;
+  const perMotivo = k => res.esclusi.filter(x => x.motivi.some(m => m.k === k)).length;
+  $("#center").innerHTML = `
+    <div class="center-head">
+      <p class="t">${esc(MANSIONI[r.mansione].nome)} × ${r.n} per ${esc(c.nome)}</p>
+      <div class="s">${esc(c.comune)} · ${QUANDO[r.quando]}, ${TURNI[r.turno].toLowerCase()} · ${esc(r.durata)} · richiede ${MANSIONI[r.mansione].req.map(a => ABIL[a].toLowerCase()).join(" e ")}</div>
+    </div>
+    <div class="scope-wrap">
+      <svg class="scope" viewBox="0 0 600 600" role="img" aria-label="Radar dei lavoratori attorno a ${esc(c.nome)}">
+        <defs><linearGradient id="sw" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#00E5FF" stop-opacity=".22"/><stop offset="1" stop-color="#00E5FF" stop-opacity="0"/></linearGradient></defs>
+        ${rings}
+        <line x1="30" y1="300" x2="570" y2="300" stroke="var(--scope-line)"/><line x1="300" y1="30" x2="300" y2="570" stroke="var(--scope-line)"/>
+        <g class="sweep"><path d="M300 300 L570 300 A270 270 0 0 0 491 109 Z" fill="url(#sw)"/></g>
+        ${dots}
+        <rect x="288" y="288" width="24" height="24" rx="5" fill="#00E5FF"/>
+        <text x="300" y="276" text-anchor="middle" fill="#9FEFFA" font-size="18" font-weight="600" font-family="Inter, sans-serif">${esc(c.nome)}</text>
+      </svg>
+    </div>
+    <div class="legend">
+      <span><i style="background:#00E5FF"></i>Compatibile</span>
+      <span><i style="background:var(--wait)"></i>Proposta inviata</span>
+      <span><i style="background:var(--ok)"></i>Disponibile</span>
+      <span><i style="border:1.5px solid #6B7B88"></i>Escluso o non disponibile</span>
+    </div>
+    <div class="stats">
+      <div class="stat"><b>${res.pool.length}</b><span>fanno questa mansione</span></div>
+      <div class="stat"><b>${res.ok.length}</b><span>compatibili adesso</span></div>
+      <div class="stat"><b>${conf} / ${r.n}</b><span>confermati</span></div>
+    </div>
+    ${res.esclusi.length ? `<div class="escl"><b>${res.esclusi.length} esclusi in automatico:</b> ${[
+      ["abil","abilitazioni scadute o mancanti"],["dist","troppo lontani"],["turno","turno non compatibile"],["disp","non disponibili o già impegnati"]
+    ].map(([k, t]) => perMotivo(k) ? perMotivo(k) + " " + t : "").filter(Boolean).join(", ")}. Nessuno di loro riceve la proposta.</div>` : ""}
+  `;
+}
+
+/* ---------- Pannello laterale ---------- */
+function disegnaLato(){
+  if (mode === "new") return disegnaForm();
+  const r = req(), res = risultati(r), c = CLIENTI[r.cliente];
+  const conf = Object.values(r.proposte).filter(v => v === "si").length;
+  const statoLab = {inviata:"In attesa", si:"Disponibile", no:"Non disponibile", chiusa:"Posizione coperta"};
+  const inviati = Object.keys(r.proposte).map(Number);
+  const giaContattati = inviati.map(id => res.pool.find(x => x.w.id === id) || {w:WORKERS.find(w => w.id === id), d:km(COMUNI[WORKERS.find(w => w.id === id).comune], COMUNI[c.comune]), motivi:[]});
+  const liberi = res.ok.filter(x => !(x.w.id in r.proposte));
+  const mancano = r.n - conf;
+  const lista = r.stato === "ricerca" ? [...giaContattati, ...liberi] : giaContattati;
+  if (r.stato === "ricerca" && !r._sel) r._sel = new Set(liberi.slice(0, Math.min(liberi.length, mancano * 2)).map(x => x.w.id));
+  const rows = lista.map(x => {
+    const st = r.proposte[x.w.id], m = x.w.mansioni[r.mansione];
+    const check = r.stato === "ricerca" && !st ? `<input type="checkbox" data-pick="${x.w.id}" ${r._sel.has(x.w.id) ? "checked" : ""} aria-label="Includi ${esc(x.w.nome)}">` : "<span></span>";
+    return `<div class="w${selWorker === x.w.id ? " sel" : ""}">
+      ${check}
+      <div><button class="n" data-w="${x.w.id}">${esc(x.w.nome)}</button>
+        <div class="d">${x.d < 1 ? "Stesso comune" : fmtKm(x.d) + " da " + esc(x.w.comune)} · ${m} ${m === 1 ? "anno" : "anni"} di esperienza · risponde in ~${x.w.rispMin} min</div></div>
+      <span class="state ${st || "pronto"}">${st ? statoLab[st] : "Compatibile"}</span>
+    </div>`;
+  }).join("");
+
+  let head = "", actions = "";
+  if (r.stato === "ricerca"){
+    head = `<div class="panel-title"><h2>Lavoratori compatibili</h2><span class="progress">${conf ? conf + " di " + r.n + " confermati" : liberi.length}</span></div>`;
+    actions = liberi.length ? `<div class="actions"><button class="btn primary" id="btnInvia" ${r._sel.size ? "" : "disabled"}>Invia proposta a ${r._sel.size}</button>
+      <button class="btn" id="btnTutti">Seleziona tutti</button></div>
+      <p class="info" style="margin:-8px 0 14px">Ordinati per vicinanza, esperienza e velocità di risposta. Già selezionati i primi ${Math.min(liberi.length, mancano * 2)}.</p>` : "";
+  } else {
+    const elapsed = r.stato === "coperta" ? r.tempo : Math.floor((Date.now() - r.t0) / 1000);
+    head = `<div class="panel-title"><h2>Risposte</h2><span class="progress">${conf} di ${r.n} confermati</span></div>`;
+    actions = r.stato === "coperta"
+      ? `<div class="done">Richiesta coperta in ${r.tempo} minuti. Il cliente è stato avvisato con i nomi confermati.</div>`
+      : `<p class="timer" id="timer">In attesa di risposta · <b>${elapsed} min</b> trascorsi <span class="info">(simulazione accelerata: 1 secondo = 1 minuto)</span></p>`;
+  }
+  $("#side").innerHTML = `${head}${actions}${rows || `<div class="empty">Nessun lavoratore compatibile. Prova a spostare la data o il turno.</div>`}
+    <h2 style="margin-top:22px">Cosa riceve il lavoratore</h2>${telefono(r)}`;
+}
+
+function telefono(r){
+  const c = CLIENTI[r.cliente];
+  const res = risultati(r);
+  const id = selWorker ?? (Object.keys(r.proposte)[0] ? +Object.keys(r.proposte)[0] : res.ok[0]?.w.id);
+  const w = WORKERS.find(x => x.id === id);
+  if (!w) return `<div class="empty">Seleziona un lavoratore per vedere il messaggio.</div>`;
+  const d = km(COMUNI[w.comune], COMUNI[c.comune]);
+  const st = r.proposte[w.id];
+  const risposte = {si:"Disponibile", no:"Non disponibile"};
+  const nota = !st ? "Anteprima: il messaggio parte quando invii la proposta."
+    : st === "inviata" ? "Tocca un pulsante per rispondere al posto di " + w.nome.split(" ")[0] + "."
+    : st === "chiusa" ? "Posizione già coperta: riceve un messaggio di ringraziamento." : "Risposta registrata.";
+  return `<div class="phone" aria-label="Anteprima del messaggio per ${esc(w.nome)}">
+    <div class="notch"></div>
+    <div class="who">Messaggio a ${esc(w.nome)}</div>
+    <div class="bubble">Ciao ${esc(w.nome.split(" ")[0])}, la Filiale di Biella ti propone un lavoro:<br>
+      <b>${esc(MANSIONI[r.mansione].nome)}</b> da ${esc(c.nome)}, ${esc(c.comune)} (${d < 1 ? "vicino a te" : fmtKm(d) + " da te"}).<br>
+      ${QUANDO[r.quando]}, turno ${TURNI[r.turno].toLowerCase()}, ${esc(r.durata)}.${r.note ? "<br>" + esc(r.note) : ""}</div>
+    ${st === "chiusa" ? `<div class="bubble" style="margin-top:8px">La posizione è stata coperta, grazie per la disponibilità. Ti scriviamo alla prossima occasione.</div>` : ""}
+    ${st === "si" || st === "no" ? `<div class="reply">${risposte[st]}</div>` : ""}
+    <div class="ans"><button class="yes" data-risp="si" data-w="${w.id}" ${st === "inviata" ? "" : "disabled"}>Disponibile</button>
+      <button data-risp="no" data-w="${w.id}" ${st === "inviata" ? "" : "disabled"}>Non disponibile</button></div>
+  </div><p class="phone-note">${nota}</p>`;
+}
+
+/* ---------- Nuova richiesta ---------- */
+function segBtns(name, opts, val){
+  return `<div class="seg" role="group">${opts.map(([v, t]) => `<button type="button" data-seg="${name}" data-v="${v}" aria-pressed="${String(v) === String(val)}">${t}</button>`).join("")}</div>`;
+}
+function disegnaForm(){
+  const m = MANSIONI[draft.mansione], c = CLIENTI[draft.cliente];
+  $("#side").innerHTML = `<div class="panel-title"><h2>Nuova richiesta urgente</h2></div>
+  <div class="form">
+    <div class="f"><label for="fCliente">Azienda cliente</label>
+      <select id="fCliente">${Object.entries(CLIENTI).map(([k, v]) => `<option value="${k}" ${k === draft.cliente ? "selected" : ""}>${esc(v.nome)}</option>`).join("")}</select>
+      <div class="info" style="margin-top:4px">${esc(c.settore)}, sede a ${esc(c.comune)}</div></div>
+    <div class="f"><label for="fMansione">Mansione</label>
+      <select id="fMansione">${Object.entries(MANSIONI).map(([k, v]) => `<option value="${k}" ${k === draft.mansione ? "selected" : ""}>${esc(v.nome)}</option>`).join("")}</select>
+      <div class="chips">${m.req.map(a => `<span class="chip">${esc(ABIL[a])}</span>`).join("")}</div></div>
+    <div class="f"><span class="lb">Quante persone</span>
+      <div class="step"><button type="button" id="meno" aria-label="Una persona in meno">−</button><output id="fN">${draft.n}</output><button type="button" id="piu" aria-label="Una persona in più">+</button></div></div>
+    <div class="f"><span class="lb">Quando</span>${segBtns("quando", QUANDO.map((q, i) => [i, q]), draft.quando)}</div>
+    <div class="f"><span class="lb">Turno</span>${segBtns("turno", Object.entries(TURNI), draft.turno)}</div>
+    <div class="f"><span class="lb">Durata</span>${segBtns("durata", DURATE.map(d => [d, d]), draft.durata)}</div>
+    <div class="f"><label for="fNote">Note per il lavoratore</label><textarea id="fNote" placeholder="Orario di arrivo, dove presentarsi, cosa portare">${esc(draft.note)}</textarea></div>
+    <div class="actions" style="margin:4px 0 0"><button class="btn primary" id="btnCerca">Cerca lavoratori</button><button class="btn" id="btnAnnulla">Annulla</button></div>
+  </div>`;
+}
+
+/* ---------- Invio proposte e risposte simulate ---------- */
+function inviaProposte(r){
+  const ids = [...r._sel];
+  ids.forEach(id => r.proposte[id] = "inviata");
+  if (r.stato === "ricerca" && !r.t0) r.t0 = Date.now();
+  r.stato = "in_corso"; r._sel = null;
+  ids.forEach(id => {
+    const w = WORKERS.find(x => x.id === id);
+    const ms = (w.rispMin * 0.8 + Math.random() * 5) * 1000;
+    timers.push({req:r.id, w:id, h:setTimeout(() => rispondi(r.id, id, Math.random() < w.acc ? "si" : "no"), ms)});
+  });
+  selWorker = ids[0];
+  toast("Proposta inviata a " + ids.length + " lavoratori");
+  avviaOrologio();
+  tutto();
+}
+function rispondi(reqId, wid, risp){
+  const r = REQS.find(x => x.id === reqId);
+  if (!r || r.proposte[wid] !== "inviata") return;
+  timers = timers.filter(t => { if (t.req === reqId && t.w === wid){ clearTimeout(t.h); return false; } return true; });
+  r.proposte[wid] = risp;
+  const w = WORKERS.find(x => x.id === wid);
+  const conf = Object.values(r.proposte).filter(v => v === "si").length;
+  if (risp === "si") toast(w.nome + " è disponibile (" + conf + " di " + r.n + ")");
+  if (conf >= r.n){
+    r.stato = "coperta"; r.tempo = Math.max(1, Math.floor((Date.now() - r.t0) / 1000));
+    Object.keys(r.proposte).forEach(k => { if (r.proposte[k] === "inviata") r.proposte[k] = "chiusa"; });
+    timers = timers.filter(t => { if (t.req === reqId){ clearTimeout(t.h); return false; } return true; });
+    toast("Richiesta coperta in " + r.tempo + " minuti");
+  } else if (!Object.values(r.proposte).includes("inviata")){
+    r.stato = "ricerca"; r._sel = null;
+    toast("Mancano " + (r.n - conf) + " persone: invia ad altri compatibili");
+  }
+  if (reqId === selReq) tutto(); else disegnaRichieste();
+}
+function avviaOrologio(){
+  clearInterval(clock);
+  clock = setInterval(() => {
+    const r = req(), el = $("#timer");
+    if (r && r.stato === "in_corso" && el && mode === "view") el.querySelector("b").textContent = Math.floor((Date.now() - r.t0) / 1000) + " min";
+    if (!REQS.some(x => x.stato === "in_corso")) clearInterval(clock);
+  }, 1000);
+}
+
+function tutto(){ disegnaRichieste(); if (mode === "view") disegnaCentro(); disegnaLato(); }
+
+/* ---------- Eventi ---------- */
+document.addEventListener("click", e => {
+  const t = e.target;
+  const rq = t.closest("[data-req]");
+  if (rq){ selReq = rq.dataset.req; selWorker = null; mode = "view"; return tutto(); }
+  const risp = t.closest("[data-risp]");
+  if (risp){ return rispondi(selReq, +risp.dataset.w, risp.dataset.risp); }
+  const wd = t.closest("[data-w]");
+  if (wd && mode === "view"){ selWorker = +wd.dataset.w; disegnaCentro(); return disegnaLato(); }
+  const pick = t.closest("[data-pick]");
+  if (pick){ const r = req(), id = +pick.dataset.pick; pick.checked ? r._sel.add(id) : r._sel.delete(id); return disegnaLato(); }
+  if (t.closest("#btnTutti")){ const r = req(); r._sel = new Set(risultati(r).ok.filter(x => !(x.w.id in r.proposte)).map(x => x.w.id)); return disegnaLato(); }
+  if (t.closest("#btnInvia")){ return inviaProposte(req()); }
+  if (t.closest("#btnNuova")){ mode = "new"; selWorker = null; disegnaRichieste(); disegnaForm(); $("#side").scrollIntoView({behavior:"smooth", block:"start"}); return; }
+  if (t.closest("#btnAnnulla")){ mode = "view"; return tutto(); }
+  const seg = t.closest("[data-seg]");
+  if (seg){ const k = seg.dataset.seg; draft[k] = k === "quando" ? +seg.dataset.v : seg.dataset.v; return disegnaForm(); }
+  if (t.closest("#meno")){ draft.n = Math.max(1, draft.n - 1); return disegnaForm(); }
+  if (t.closest("#piu")){ draft.n = Math.min(10, draft.n + 1); return disegnaForm(); }
+  if (t.closest("#btnCerca")){
+    draft.note = $("#fNote").value.trim();
+    const r = {id:"R-" + nextId++, cliente:draft.cliente, mansione:draft.mansione, n:draft.n, quando:draft.quando, turno:draft.turno, durata:draft.durata, note:draft.note, stato:"ricerca", proposte:{}, t0:null, tempo:null};
+    REQS.unshift(r); selReq = r.id; selWorker = null; mode = "view";
+    const n = risultati(r).ok.length;
+    toast(n ? n + " lavoratori compatibili trovati" : "Nessun compatibile: prova un altro turno o giorno");
+    tutto(); $("#center").scrollIntoView({behavior:"smooth", block:"start"});
+    return;
+  }
+  if (t.closest("#btnReset")){
+    timers.forEach(x => clearTimeout(x.h)); timers = []; clearInterval(clock);
+    REQS = seed(); selReq = "R-104"; selWorker = null; mode = "view"; nextId = 105;
+    toast("Demo ricominciata"); return tutto();
+  }
+});
+document.addEventListener("change", e => {
+  if (e.target.id === "fCliente"){ draft.cliente = e.target.value; draft.note = $("#fNote").value; disegnaForm(); }
+  if (e.target.id === "fMansione"){ draft.mansione = e.target.value; draft.note = $("#fNote").value; disegnaForm(); }
+});
+document.addEventListener("keydown", e => {
+  if ((e.key === "Enter" || e.key === " ") && e.target.matches(".w-dot")){ e.preventDefault(); selWorker = +e.target.dataset.w; disegnaCentro(); disegnaLato(); }
+});
+
+tutto();
+</script>
+</body>
+</html>
