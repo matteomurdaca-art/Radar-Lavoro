@@ -13,8 +13,9 @@
   --bg:#EEF2F5; --surface:#FFFFFF; --surface-2:#F6F8FA; --ink:#0F171E; --muted:#56646F; --line:#D8E0E6;
   --accent:#00798A; --accent-soft:rgba(0,121,138,.10); --on-accent:#FFFFFF;
   --ok:#1E9E5A; --ok-soft:rgba(30,158,90,.12); --wait:#B8760A; --wait-soft:rgba(184,118,10,.13);
-  --no:#7C8993; --no-soft:rgba(124,137,147,.14); --err:#C23B32;
-  --scope:#060B11; --scope-line:#16303B; --cyan:#00E5FF;
+  --no:#7C8993; --no-soft:rgba(124,137,147,.14); --err:#C23B32; --err-soft:rgba(194,59,50,.11);
+  --new:#6D4FD1; --new-soft:rgba(109,79,209,.12);
+  --scope:#060B11; --scope-line:#16303B;
   --display:"Space Grotesk", "Segoe UI", system-ui, sans-serif;
   --body:"Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
   box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
@@ -24,14 +25,16 @@
     --bg:#070B10; --surface:#0E151D; --surface-2:#121B25; --ink:#E6EDF3; --muted:#8C9CAA; --line:#1D2B38;
     --accent:#00E5FF; --accent-soft:rgba(0,229,255,.10); --on-accent:#03181C;
     --ok:#34D399; --ok-soft:rgba(52,211,153,.12); --wait:#FFB020; --wait-soft:rgba(255,176,32,.12);
-    --no:#6B7B88; --no-soft:rgba(107,123,136,.14); --err:#FF6B61;
+    --no:#6B7B88; --no-soft:rgba(107,123,136,.14); --err:#FF6B61; --err-soft:rgba(255,107,97,.12);
+    --new:#A78BFA; --new-soft:rgba(167,139,250,.14);
   }
 }
 :root[data-theme="dark"]{
   --bg:#070B10; --surface:#0E151D; --surface-2:#121B25; --ink:#E6EDF3; --muted:#8C9CAA; --line:#1D2B38;
   --accent:#00E5FF; --accent-soft:rgba(0,229,255,.10); --on-accent:#03181C;
   --ok:#34D399; --ok-soft:rgba(52,211,153,.12); --wait:#FFB020; --wait-soft:rgba(255,176,32,.12);
-  --no:#6B7B88; --no-soft:rgba(107,123,136,.14); --err:#FF6B61;
+  --no:#6B7B88; --no-soft:rgba(107,123,136,.14); --err:#FF6B61; --err-soft:rgba(255,107,97,.12);
+  --new:#A78BFA; --new-soft:rgba(167,139,250,.14);
 }
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *,*::before,*::after{box-sizing:border-box}
@@ -40,11 +43,15 @@ button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
-.top{display:flex;align-items:center;gap:16px;padding:12px 20px;background:var(--surface);border-bottom:1px solid var(--line);flex-wrap:wrap}
+.top{display:flex;align-items:center;gap:14px;padding:12px 20px;background:var(--surface);border-bottom:1px solid var(--line);flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:10px}
 .brand b{font-family:var(--display);font-weight:700;letter-spacing:.14em;font-size:18px}
 .brand b span{color:var(--accent)}
-.filiale{color:var(--muted);font-size:13px}
+.roles{display:flex;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:3px;gap:2px}
+.roles button{border:0;background:transparent;border-radius:9px;padding:7px 14px;font-weight:500;color:var(--muted);display:inline-flex;align-items:center;gap:7px}
+.roles button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12);font-weight:600}
+.badge{min-width:18px;height:18px;padding:0 5px;border-radius:99px;background:var(--err);color:#fff;font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center}
+.badge[hidden]{display:none}
 .top .spacer{flex:1}
 .demo-tag{font-size:12px;color:var(--wait);background:var(--wait-soft);padding:3px 10px;border-radius:99px}
 .btn{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 14px;font-weight:500}
@@ -53,8 +60,11 @@ button{cursor:pointer}
 .btn.primary:hover{filter:brightness(1.07)}
 .btn:disabled{opacity:.45;cursor:default;filter:none}
 .btn.ghost{background:transparent}
+.btn.small{padding:6px 11px;font-size:13.5px}
 
-.app{display:grid;grid-template-columns:280px minmax(0,1fr) 380px;gap:0;min-height:calc(100vh - 62px)}
+.view[hidden]{display:none}
+.app{display:grid;grid-template-columns:290px minmax(0,1fr) 380px;min-height:calc(100vh - 62px)}
+.app.two{grid-template-columns:320px minmax(0,1fr)}
 .col{border-right:1px solid var(--line);min-width:0}
 .col:last-child{border-right:0}
 .pad{padding:18px}
@@ -62,21 +72,24 @@ h2{font-family:var(--display);font-size:15px;font-weight:600;margin:0 0 12px;col
 
 .req{display:block;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:12px 14px;margin-bottom:10px}
 .req.sel{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.req.da_approvare{border-left-color:var(--new)}
 .req.coperta{border-left-color:var(--ok)}
 .req.in_corso{border-left-color:var(--wait)}
 .req .r1{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;font-weight:600}
 .req .r1 .pill{flex:none;margin-top:1px}
-.req .r2{color:var(--muted);font-size:13px;margin-top:2px}
+.req .r2{color:var(--muted);font-size:13px;margin-top:3px}
 .pill{display:inline-block;font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:99px;white-space:nowrap}
+.pill.da_approvare{color:var(--new);background:var(--new-soft)}
 .pill.ricerca{color:var(--accent);background:var(--accent-soft)}
 .pill.in_corso{color:var(--wait);background:var(--wait-soft)}
 .pill.coperta{color:var(--ok);background:var(--ok-soft)}
+.tipo{display:inline-block;font-size:11.5px;color:var(--muted);border:1px solid var(--line);border-radius:99px;padding:0 8px;margin-right:6px}
 
 .center{display:flex;flex-direction:column;align-items:center;padding:18px 18px 24px;gap:14px;background:var(--bg)}
 .center-head{width:100%;max-width:640px}
 .center-head .t{font-family:var(--display);font-size:24px;font-weight:600;line-height:1.2;margin:0}
-.center-head .s{color:var(--muted);font-size:14px;margin-top:4px}
-.scope-wrap{position:relative;width:100%;max-width:560px;aspect-ratio:1}
+.center-head .s{color:var(--muted);font-size:14px;margin-top:6px}
+.scope-wrap{position:relative;width:100%;max-width:540px;aspect-ratio:1}
 .scope{width:100%;height:100%;display:block;border-radius:50%;background:var(--scope)}
 .sweep{transform-origin:300px 300px;animation:giro 5s linear infinite}
 @keyframes giro{to{transform:rotate(360deg)}}
@@ -92,6 +105,8 @@ h2{font-family:var(--display);font-size:15px;font-weight:600;margin:0 0 12px;col
 .stat span{font-size:12.5px;color:var(--muted)}
 .escl{width:100%;max-width:640px;font-size:13px;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
 .escl b{color:var(--ink);font-weight:600}
+.approve-box{width:100%;max-width:640px;background:var(--new-soft);border:1px solid var(--new);border-radius:12px;padding:14px 16px}
+.approve-box p{margin:0 0 10px}
 
 .panel-title{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:10px}
 .panel-title h2{margin:0}
@@ -101,6 +116,7 @@ h2{font-family:var(--display);font-size:15px;font-weight:600;margin:0 0 12px;col
 .w input{width:18px;height:18px;accent-color:var(--accent);margin:0}
 .w .n{font-weight:600;cursor:pointer;background:none;border:0;padding:0;text-align:left}
 .w .d{font-size:12.5px;color:var(--muted)}
+.w select{font-size:12.5px;border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:4px 6px;max-width:150px}
 .state{font-size:12px;font-weight:600;padding:3px 9px;border-radius:99px;white-space:nowrap}
 .state.pronto{color:var(--accent);background:var(--accent-soft)}
 .state.inviata{color:var(--wait);background:var(--wait-soft)}
@@ -111,16 +127,17 @@ h2{font-family:var(--display);font-size:15px;font-weight:600;margin:0 0 12px;col
 .timer b{color:var(--ink)}
 .done{background:var(--ok-soft);color:var(--ok);border-radius:12px;padding:12px 14px;font-weight:600;margin-bottom:16px}
 .empty{color:var(--muted);font-size:14px;border:1px dashed var(--line);border-radius:12px;padding:16px}
+.info{font-size:12.5px;color:var(--muted)}
 
 .phone{margin:6px auto 0;width:250px;border:8px solid #1A232D;border-radius:32px;background:var(--surface-2);padding:14px 12px 16px;min-height:290px}
 .phone .notch{width:70px;height:6px;border-radius:6px;background:var(--line);margin:0 auto 12px}
 .phone .who{font-size:12px;color:var(--muted);margin-bottom:8px;text-align:center}
 .bubble{background:var(--surface);border:1px solid var(--line);border-radius:14px 14px 14px 4px;padding:10px 12px;font-size:13px;line-height:1.45}
-.phone .ans{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
-.phone .ans button{border-radius:10px;padding:9px 4px;font-size:13px;font-weight:600;border:1px solid var(--line);background:var(--surface)}
-.phone .ans .yes{background:var(--ok);border-color:var(--ok);color:#fff}
-.phone .ans button:disabled{opacity:.4;cursor:default}
-.phone .reply{margin-top:10px;margin-left:auto;width:fit-content;max-width:90%;background:var(--accent);color:var(--on-accent);border-radius:14px 14px 4px 14px;padding:8px 12px;font-size:13px}
+.ans{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
+.ans button{border-radius:10px;padding:9px 4px;font-size:13px;font-weight:600;border:1px solid var(--line);background:var(--surface)}
+.ans .yes{background:var(--ok);border-color:var(--ok);color:#fff}
+.ans button:disabled{opacity:.4;cursor:default}
+.reply{margin-top:10px;margin-left:auto;width:fit-content;max-width:90%;background:var(--accent);color:var(--on-accent);border-radius:14px 14px 4px 14px;padding:8px 12px;font-size:13px}
 .phone-note{font-size:12px;color:var(--muted);text-align:center;margin-top:8px}
 
 .form{display:flex;flex-direction:column;gap:14px}
@@ -130,29 +147,61 @@ h2{font-family:var(--display);font-size:15px;font-weight:600;margin:0 0 12px;col
 .seg{display:flex;gap:6px;flex-wrap:wrap}
 .seg button{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:7px 12px;font-size:13.5px}
 .seg button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:600}
-.step{display:flex;align-items:center;gap:10px}
-.step button{width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:var(--surface);font-size:18px}
-.step output{font-family:var(--display);font-size:20px;font-weight:600;min-width:24px;text-align:center}
+.stepper{display:flex;align-items:center;gap:10px}
+.stepper button{width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:var(--surface);font-size:18px}
+.stepper output{font-family:var(--display);font-size:20px;font-weight:600;min-width:28px;text-align:center}
 .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
 .chip{font-size:12px;border:1px solid var(--line);border-radius:99px;padding:2px 9px;color:var(--muted)}
-.info{font-size:12.5px;color:var(--muted)}
+
+.main-pane{padding:22px 26px 40px;max-width:760px}
+.who-bar{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+.who-bar select{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 10px;max-width:100%}
+.big{font-family:var(--display);font-size:26px;font-weight:600;line-height:1.2;margin:0 0 4px}
+.sub{color:var(--muted);margin:0 0 18px}
+.steps{list-style:none;margin:0 0 20px;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.steps li{border-top:3px solid var(--line);padding-top:8px;font-size:13px;color:var(--muted)}
+.steps li.on{border-color:var(--accent);color:var(--ink);font-weight:600}
+.steps li.ok{border-color:var(--ok);color:var(--ink)}
+.bar{height:10px;background:var(--surface-2);border:1px solid var(--line);border-radius:99px;overflow:hidden;margin:8px 0 6px}
+.bar i{display:block;height:100%;background:var(--ok);border-radius:99px;transition:width .4s}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:14px}
+.card h3{font-family:var(--display);font-size:16px;margin:0 0 8px}
+.person{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--line);font-size:14px}
+.person:first-of-type{border-top:0}
+
+.worker-app{max-width:560px;margin:0 auto;padding:20px 16px 48px}
+.hello{font-family:var(--display);font-size:26px;font-weight:600;margin:0}
+.toggle{display:flex;gap:6px;flex-wrap:wrap}
+.toggle button{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:10px 14px;font-weight:500}
+.toggle button[aria-pressed="true"]{border-color:var(--ok);background:var(--ok-soft);color:var(--ok);font-weight:600}
+.toggle button.off[aria-pressed="true"]{border-color:var(--no);background:var(--no-soft);color:var(--ink)}
+.abil{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.abil:first-of-type{border-top:0}
+.abil .scad{font-size:12.5px;color:var(--muted)}
+.abil .scad.warn{color:var(--wait);font-weight:600}
+.abil .scad.bad{color:var(--err);font-weight:600}
+.prop{border:1px solid var(--accent);border-radius:14px;padding:14px 16px;margin-bottom:12px;background:var(--surface)}
+.prop h3{margin:6px 0 4px;font-family:var(--display);font-size:17px}
 
 .toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:10;max-width:90vw}
 .toast.on{opacity:1}
 
-@media (max-width:1100px){.app{grid-template-columns:240px minmax(0,1fr) 340px}}
+@media (max-width:1100px){.app{grid-template-columns:250px minmax(0,1fr) 340px}}
 @media (max-width:900px){
-  .app{grid-template-columns:1fr}
+  .app,.app.two{grid-template-columns:1fr}
   .col{border-right:0;border-bottom:1px solid var(--line)}
-  .col.list{order:1}.col.center{order:2}.col.side{order:3}
-  .list .reqs{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px}
-  .list .req{min-width:230px;margin-bottom:0}
-  .stats{grid-template-columns:repeat(3,1fr)}
+  .reqs{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px}
+  .reqs .req{min-width:240px;margin-bottom:0}
+  .main-pane{padding:18px 16px 32px}
+  .steps{grid-template-columns:repeat(2,1fr)}
 }
-@media (max-width:520px){
+@media (max-width:620px){
   .top{padding:10px 14px;gap:10px}
-  .filiale{display:none}
-  .center-head .t{font-size:20px}
+  .brand b{font-size:16px}
+  .roles{order:3;width:100%}
+  .roles button{flex:1;justify-content:center;padding:8px 6px}
+  .demo-tag{display:none}
+  .center-head .t,.big{font-size:21px}
   .stat b{font-size:22px}
 }
 </style>
@@ -163,28 +212,48 @@ h2{font-family:var(--display);font-size:15px;font-weight:600;margin:0 0 12px;col
     <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="currentColor" stroke-opacity=".25" stroke-width="1.5"/><circle cx="16" cy="16" r="8.5" fill="none" stroke="currentColor" stroke-opacity=".5" stroke-width="1.5"/><circle cx="16" cy="16" r="3.2" fill="#00B8CC"/></svg>
     <b>RADAR <span>Lavoro</span></b>
   </div>
-  <span class="filiale">Filiale di Biella</span>
+  <nav class="roles" role="tablist" aria-label="Chi sta usando l'app">
+    <button role="tab" data-role="agenzia" aria-selected="true">Agenzia <span class="badge" id="bAg" hidden></span></button>
+    <button role="tab" data-role="azienda" aria-selected="false">Azienda</button>
+    <button role="tab" data-role="lavoratore" aria-selected="false">Lavoratore <span class="badge" id="bLa" hidden></span></button>
+  </nav>
   <span class="demo-tag">Demo con dati di prova</span>
   <span class="spacer"></span>
-  <button class="btn ghost" id="btnReset">Ricomincia la demo</button>
-  <button class="btn primary" id="btnNuova">Nuova richiesta urgente</button>
+  <button class="btn ghost small" id="btnReset">Ricomincia la demo</button>
 </header>
 
-<div class="app">
-  <aside class="col list pad">
-    <h2>Richieste</h2>
-    <div class="reqs" id="reqs"></div>
-  </aside>
+<section class="view" id="vAgenzia">
+  <div class="app">
+    <aside class="col pad">
+      <h2>Richieste · Filiale di Biella</h2>
+      <button class="btn primary" id="btnNuova" style="width:100%;margin-bottom:14px">Nuova richiesta</button>
+      <div class="reqs" id="reqsAg"></div>
+    </aside>
+    <main class="col center" id="center"></main>
+    <aside class="col pad" id="side"></aside>
+  </div>
+</section>
 
-  <main class="col center" id="center"></main>
+<section class="view" id="vAzienda" hidden>
+  <div class="app two">
+    <aside class="col pad">
+      <div class="who-bar"><label for="selAz" class="info">Stai usando il portale come</label><select id="selAz"></select></div>
+      <button class="btn primary" id="btnNuovaAz" style="width:100%;margin-bottom:14px">Chiedi personale</button>
+      <h2>Le tue richieste</h2>
+      <div class="reqs" id="reqsAz"></div>
+    </aside>
+    <main class="col"><div class="main-pane" id="paneAz"></div></main>
+  </div>
+</section>
 
-  <aside class="col side pad" id="side"></aside>
-</div>
+<section class="view" id="vLavoratore" hidden>
+  <div class="worker-app" id="paneLa"></div>
+</section>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
-/* ---------- Dati di prova ---------- */
+/* ================= Dati di prova ================= */
 const COMUNI = {
   "Biella":[45.5663,8.0530],"Cossato":[45.5710,8.1780],"Gaglianico":[45.5390,8.0760],"Candelo":[45.5450,8.1110],
   "Vigliano Biellese":[45.5620,8.1040],"Ponderano":[45.5360,8.0570],"Sandigliano":[45.5220,8.0770],"Verrone":[45.5070,8.1210],
@@ -207,24 +276,36 @@ const MANSIONI = {
   pulizie:{nome:"Addetto pulizie", req:["sicurezza"]}
 };
 const CLIENTI = {
-  elvo:{nome:"Magazzini Elvo", comune:"Gaglianico", settore:"Logistica"},
-  baraggia:{nome:"Trasporti Baraggia", comune:"Cossato", settore:"Trasporti"},
-  tigli:{nome:"RSA Villa dei Tigli", comune:"Candelo", settore:"Assistenza"},
-  ponte:{nome:"Trattoria del Ponte", comune:"Biella", settore:"Ristorazione"},
-  cervo:{nome:"Filatura Val Cervo", comune:"Tollegno", settore:"Industria"},
-  serra:{nome:"Edil Serra", comune:"Mongrando", settore:"Edilizia"}
+  elvo:{nome:"Magazzini Elvo", comune:"Gaglianico", settore:"Logistica", mans:"magazziniere"},
+  baraggia:{nome:"Trasporti Baraggia", comune:"Cossato", settore:"Trasporti", mans:"autista_ce"},
+  tigli:{nome:"RSA Villa dei Tigli", comune:"Candelo", settore:"Assistenza", mans:"oss"},
+  ponte:{nome:"Trattoria del Ponte", comune:"Biella", settore:"Ristorazione", mans:"cameriere"},
+  cervo:{nome:"Filatura Val Cervo", comune:"Tollegno", settore:"Industria", mans:"carrellista"},
+  serra:{nome:"Edil Serra", comune:"Mongrando", settore:"Edilizia", mans:"ple"}
 };
 const TURNI = {M:"Mattina 6-14", P:"Pomeriggio 14-22", N:"Notte 22-6", G:"Giornata 8-17"};
-const QUANDO = ["Oggi","Domani","Dopodomani"];
-const DURATE = ["1 giorno","1 settimana","1 mese","Da definire"];
 
-/* id, nome, comune, km max, mezzo, turni, disponibilità, mansioni {codice:anni}, abilitazioni {codice:giorni alla scadenza}, minuti medi di risposta, probabilità di accettare */
+/* Tre tipi di ricerca: cambiano tempi, durata, risposta del lavoratore e percorso */
+const TIPI = {
+  urgente:{nome:"Urgente", desc:"Oggi o nei prossimi giorni, anche per poche giornate.",
+    quando:[[0,"Oggi"],[1,"Domani"],[2,"Dopodomani"]], durate:["1 giorno","1 settimana"],
+    si:"Disponibile", no:"Non disponibile", attesa:"meno di 30 minuti"},
+  missione:{nome:"Missione", desc:"Settimane o mesi in somministrazione, pianificata per tempo.",
+    quando:[[7,"Tra una settimana"],[14,"Tra due settimane"]], durate:["1 mese","3 mesi","6 mesi"],
+    si:"Mi interessa", no:"Non mi interessa", attesa:"entro 24 ore"},
+  selezione:{nome:"Selezione", desc:"Assunzione diretta dall'azienda, con colloqui.",
+    quando:[[30,"Entro un mese"],[60,"Entro due mesi"]], durate:["Tempo determinato","Tempo indeterminato"],
+    si:"Mi candido", no:"Non mi interessa", attesa:"entro 3 giorni"}
+};
+const FASI = [["interessato","Candidato"],["colloquio","Colloquio in agenzia"],["presentato","Presentato al cliente"],["assunto","Assunto"],["scartato","Non idoneo"]];
+
+/* id, nome, comune, km max, mezzo, turni, disponibilità, mansioni {codice:anni}, abilitazioni {codice:giorni alla scadenza}, minuti di risposta, probabilità di accettare */
 const W_RAW = [
  [1,"Marco R.","Cossato",20,"auto","MPG","subito",{carrellista:3,magazziniere:4},{carrelli:400,sicurezza:600},5,.85],
  [2,"Elena B.","Biella",10,"pubblici","MP","subito",{cameriere:5,pulizie:2},{haccp:300,sicurezza:200},8,.7],
  [3,"Luca M.","Vigliano Biellese",15,"auto","MPN","subito",{carrellista:1,magazziniere:2},{carrelli:-20,sicurezza:500},12,.6],
  [4,"Giulia F.","Candelo",25,"auto","MPNG","subito",{oss:6},{oss:9999,sicurezza:100},4,.9],
- [5,"Andrea T.","Gaglianico",10,"auto","MPNG","subito",{carrellista:5,ple:3},{carrelli:800,ple:1,sicurezza:900},3,.85],
+ [5,"Andrea T.","Gaglianico",10,"auto","MPNG","subito",{carrellista:5,ple:3},{carrelli:800,ple:40,sicurezza:900},3,.85],
  [6,"Sara P.","Ponderano",8,"pubblici","MP","subito",{cameriere:2},{haccp:-5},10,.5],
  [7,"Davide C.","Mongrando",30,"auto","MPNG","subito",{autista_ce:8,carrellista:2},{patente_ce:2000,cqc:700,carrelli:300,sicurezza:300},6,.75],
  [8,"Francesca L.","Valdengo",12,"auto","MP","+5",{oss:3,pulizie:1},{oss:9999,sicurezza:400},15,.6],
@@ -249,28 +330,32 @@ const W_RAW = [
  [27,"Kevin D.","Graglia",20,"auto","MPN","subito",{carrellista:1},{carrelli:200,sicurezza:-10},7,.7],
  [28,"Beatrice N.","Gaglianico",8,"auto","MPG","subito",{cameriere:3,magazziniere:1},{haccp:250,sicurezza:250},5,.8]
 ];
-const WORKERS = W_RAW.map(r => ({id:r[0], nome:r[1], comune:r[2], maxKm:r[3], mezzo:r[4], turni:r[5], disp:r[6], mansioni:r[7], abil:r[8], rispMin:r[9], acc:r[10]}));
-
+let WORKERS, REQS;
+function caricaLavoratori(){
+  WORKERS = W_RAW.map(r => ({id:r[0], nome:r[1], comune:r[2], maxKm:r[3], mezzo:r[4], turni:r[5], disp:r[6],
+    mansioni:{...r[7]}, abil:{...r[8]}, rispMin:r[9], acc:r[10]}));
+}
 function seed(){
   return [
-    {id:"R-104", cliente:"elvo", mansione:"carrellista", n:3, quando:1, turno:"M", durata:"1 settimana", note:"Presentarsi alle 5:45 in portineria con scarpe antinfortunistiche.", stato:"ricerca", proposte:{}, t0:null, tempo:null},
-    {id:"R-103", cliente:"baraggia", mansione:"autista_ce", n:1, quando:2, turno:"G", durata:"1 giorno", note:"Consegne in Lombardia, rientro in giornata.", stato:"ricerca", proposte:{}, t0:null, tempo:null},
-    {id:"R-102", cliente:"tigli", mansione:"oss", n:1, quando:0, turno:"N", durata:"1 giorno", note:"", stato:"coperta", proposte:{4:"si",19:"chiusa",14:"no"}, t0:null, tempo:18}
+    {id:"R-104", cliente:"elvo", mansione:"carrellista", n:3, tipo:"urgente", quando:1, turno:"M", durata:"1 settimana", note:"Presentarsi alle 5:45 in portineria con scarpe antinfortunistiche.", stato:"ricerca", proposte:{}, fasi:{}, t0:null, tempo:null},
+    {id:"R-103", cliente:"cervo", mansione:"carrellista", n:1, tipo:"selezione", quando:30, turno:"M", durata:"Tempo indeterminato", note:"Magazzino materie prime, turni a rotazione mattina e pomeriggio.", stato:"ricerca", proposte:{}, fasi:{}, t0:null, tempo:null},
+    {id:"R-102", cliente:"baraggia", mansione:"autista_ce", n:1, tipo:"missione", quando:7, turno:"G", durata:"3 mesi", note:"Consegne in Lombardia, rientro in giornata.", stato:"ricerca", proposte:{}, fasi:{}, t0:null, tempo:null},
+    {id:"R-101", cliente:"tigli", mansione:"oss", n:1, tipo:"urgente", quando:0, turno:"N", durata:"1 giorno", note:"", stato:"coperta", proposte:{4:"si",19:"chiusa",14:"no"}, fasi:{}, t0:null, tempo:18}
   ];
 }
 
-let REQS = seed(), selReq = "R-104", selWorker = null, mode = "view", nextId = 105;
-let timers = [], clock = null;
-const draft = {cliente:"ponte", mansione:"cameriere", n:2, quando:0, turno:"P", durata:"1 giorno", note:""};
+let role = "agenzia", selReq = "R-104", selWorker = null, modeAg = "view", modeAz = "view";
+let azienda = "elvo", selReqAz = null, meId = 5, nextId = 105, timers = [], clock = null;
+const draft = {cliente:"ponte", mansione:"cameriere", n:2, tipo:"urgente", quando:0, turno:"P", durata:"1 giorno", note:""};
 
-/* ---------- Utilità ---------- */
+/* ================= Utilità ================= */
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function km(a, b){
   const R = 6371, t = x => x * Math.PI / 180;
   const dLat = t(b[0]-a[0]), dLng = t(b[1]-a[1]);
   const h = Math.sin(dLat/2)**2 + Math.cos(t(a[0]))*Math.cos(t(b[0]))*Math.sin(dLng/2)**2;
-  return 2 * R * Math.asin(Math.sqrt(h)) * 1.25; /* fattore strada */
+  return 2 * R * Math.asin(Math.sqrt(h)) * 1.25;
 }
 function bearing(a, b){
   const t = x => x * Math.PI / 180;
@@ -278,13 +363,18 @@ function bearing(a, b){
   const x = Math.cos(t(a[0]))*Math.sin(t(b[0])) - Math.sin(t(a[0]))*Math.cos(t(b[0]))*Math.cos(t(b[1]-a[1]));
   return Math.atan2(y, x);
 }
-function fmtKm(d){ return d < 1 ? "meno di 1 km" : d.toLocaleString("it-IT", {maximumFractionDigits:1}) + " km"; }
-function toast(msg){ const t = $("#toast"); t.textContent = msg; t.classList.add("on"); clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove("on"), 2600); }
-function req(){ return REQS.find(r => r.id === selReq); }
+const fmtKm = d => d < 1 ? "meno di 1 km" : d.toLocaleString("it-IT", {maximumFractionDigits:1}) + " km";
+const W = id => WORKERS.find(w => w.id === id);
+const R = id => REQS.find(r => r.id === id);
+function quandoTxt(r){ const q = TIPI[r.tipo].quando.find(x => x[0] === r.quando); return q ? q[1] : ""; }
+function toast(msg){ const t = $("#toast"); t.textContent = msg; t.classList.add("on"); clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove("on"), 2800); }
+function nSi(r){ return Object.values(r.proposte).filter(v => v === "si").length; }
+function coperti(r){ return r.tipo === "selezione" ? Object.values(r.fasi).filter(v => v === "assunto").length : nSi(r); }
+function presentati(r){ return Object.entries(r.fasi).filter(([, f]) => f === "presentato" || f === "assunto").map(([id]) => +id); }
 
-/* ---------- Motore di matching ---------- */
+/* ================= Motore di matching ================= */
 function impegnato(w, r){
-  return REQS.some(x => x.id !== r.id && x.quando === r.quando && x.proposte[w.id] === "si");
+  return r.tipo === "urgente" && REQS.some(x => x.id !== r.id && x.tipo === "urgente" && x.quando === r.quando && x.proposte[w.id] === "si");
 }
 function valuta(w, r){
   const c = CLIENTI[r.cliente], m = MANSIONI[r.mansione];
@@ -293,65 +383,72 @@ function valuta(w, r){
   for (const a of m.req){
     const g = w.abil[a];
     if (g === undefined) motivi.push({k:"abil", t:"manca " + ABIL[a].toLowerCase()});
-    else if (g <= r.quando) motivi.push({k:"abil", t: ABIL[a] + (g < 0 ? " scaduta" : " scade prima del lavoro")});
+    else if (g <= r.quando) motivi.push({k:"abil", t: ABIL[a] + (g < 0 ? " scaduta" : " scade prima dell'inizio")});
   }
-  if (d > w.maxKm) motivi.push({k:"dist", t:"troppo lontano (" + fmtKm(d) + ", accetta fino a " + w.maxKm + " km)"});
-  if (!w.turni.includes(r.turno)) motivi.push({k:"turno", t:"non fa il turno " + TURNI[r.turno].split(" ")[0].toLowerCase()});
-  if (r.turno === "N" && w.mezzo === "pubblici") motivi.push({k:"turno", t:"senza auto per il turno di notte"});
-  if (w.disp === "no") motivi.push({k:"disp", t:"al momento non disponibile"});
-  else if (w.disp.startsWith("+") && +w.disp.slice(1) > r.quando) motivi.push({k:"disp", t:"disponibile tra " + w.disp.slice(1) + " giorni"});
-  if (impegnato(w, r)) motivi.push({k:"disp", t:"già impegnato quel giorno"});
+  if (d > w.maxKm) motivi.push({k:"dist", t:"troppo lontano"});
+  if (!w.turni.includes(r.turno)) motivi.push({k:"turno", t:"turno non compatibile"});
+  if (r.turno === "N" && w.mezzo === "pubblici") motivi.push({k:"turno", t:"senza auto per la notte"});
+  if (w.disp === "no") motivi.push({k:"disp", t:"non disponibile"});
+  else if (w.disp.startsWith("+") && +w.disp.slice(1) > r.quando) motivi.push({k:"disp", t:"disponibile più avanti"});
+  if (impegnato(w, r)) motivi.push({k:"disp", t:"già impegnato"});
   return {w, d, motivi, ok: motivi.length === 0};
 }
 function risultati(r){
   const pool = WORKERS.filter(w => w.mansioni[r.mansione] !== undefined).map(w => valuta(w, r));
+  /* urgente: conta soprattutto la vicinanza; selezione: soprattutto l'esperienza */
+  const pesoEsp = r.tipo === "selezione" ? 6 : r.tipo === "missione" ? 3 : 1.5;
   const ok = pool.filter(x => x.ok).sort((a, b) =>
-    (a.d - b.d) * 1 - (b.w.mansioni[r.mansione] - a.w.mansioni[r.mansione]) * 1.5 + (a.w.rispMin - b.w.rispMin) * .4);
+    (a.d - b.d) - (b.w.mansioni[r.mansione] - a.w.mansioni[r.mansione]) * pesoEsp + (a.w.rispMin - b.w.rispMin) * .4);
   return {pool, ok, esclusi: pool.filter(x => !x.ok)};
 }
 
-/* ---------- Elenco richieste ---------- */
-function disegnaRichieste(){
-  const lab = {ricerca:"Da inviare", in_corso:"Proposte inviate", coperta:"Coperta"};
-  $("#reqs").innerHTML = REQS.map(r => {
-    const c = CLIENTI[r.cliente], si = Object.values(r.proposte).filter(v => v === "si").length;
-    return `<button class="req ${r.stato}${r.id === selReq && mode === "view" ? " sel" : ""}" data-req="${r.id}">
-      <div class="r1"><span>${esc(MANSIONI[r.mansione].nome)} × ${r.n}</span><span class="pill ${r.stato}">${lab[r.stato]}</span></div>
-      <div class="r2">${esc(c.nome)}, ${esc(c.comune)}</div>
-      <div class="r2">${QUANDO[r.quando]}, ${TURNI[r.turno].toLowerCase()}${r.stato !== "ricerca" ? " · " + si + " di " + r.n + " confermati" : ""}</div>
-    </button>`;
-  }).join("");
+/* ================= Schede richiesta ================= */
+const STATO_LAB = {da_approvare:"Da approvare", ricerca:"In ricerca", in_corso:"Proposte inviate", coperta:"Coperta"};
+function schedaRichiesta(r, sel, perAzienda){
+  const c = CLIENTI[r.cliente];
+  const lab = perAzienda && r.stato === "da_approvare" ? "In attesa della filiale" : STATO_LAB[r.stato];
+  const avanz = r.stato === "in_corso" || r.stato === "coperta" ? " · " + coperti(r) + " di " + r.n : "";
+  return `<button class="req ${r.stato}${sel ? " sel" : ""}" data-req="${r.id}" data-az="${perAzienda ? 1 : 0}">
+    <div class="r1"><span>${esc(MANSIONI[r.mansione].nome)} × ${r.n}</span><span class="pill ${r.stato}">${lab}</span></div>
+    <div class="r2"><span class="tipo">${TIPI[r.tipo].nome}</span>${perAzienda ? "" : esc(c.nome) + ", " + esc(c.comune)}</div>
+    <div class="r2">${quandoTxt(r)}, ${TURNI[r.turno].toLowerCase()}${avanz}</div>
+  </button>`;
 }
 
-/* ---------- Radar ---------- */
+/* ================= AGENZIA ================= */
 const MAXKM = 32, RAD = 270;
+function disegnaAgenzia(){
+  $("#reqsAg").innerHTML = REQS.map(r => schedaRichiesta(r, r.id === selReq && modeAg === "view", false)).join("");
+  disegnaCentro();
+  if (modeAg === "new") disegnaForm("#side", false); else disegnaLato();
+}
 function disegnaCentro(){
-  const r = req(), c = CLIENTI[r.cliente], res = risultati(r), casa = COMUNI[c.comune];
-  const col = st => ({si:"var(--ok)", inviata:"var(--wait)", no:"#6B7B88", chiusa:"#6B7B88"}[st] || "#00E5FF");
+  const r = R(selReq); if (!r){ $("#center").innerHTML = ""; return; }
+  const c = CLIENTI[r.cliente], res = risultati(r), casa = COMUNI[c.comune];
+  const colore = st => ({si:"#34D399", inviata:"#FFB020", no:"#6B7B88", chiusa:"#6B7B88"}[st] || "#00E5FF");
   const rings = [5,10,20,30].map(k => {
     const rr = k / MAXKM * RAD;
     return `<circle cx="300" cy="300" r="${rr}" fill="none" stroke="var(--scope-line)" stroke-width="1.5"/>
-            <text x="${300 + rr * .707 + 4}" y="${300 - rr * .707 - 4}" fill="#5E7C8A" font-size="17" font-family="Inter, sans-serif">${k} km</text>`;
+      <text x="${300 + rr * .707 + 4}" y="${300 - rr * .707 - 4}" fill="#5E7C8A" font-size="17" font-family="Inter, sans-serif">${k} km</text>`;
   }).join("");
-  const dots = res.pool.map(x => {
+  const dots = r.stato === "da_approvare" ? "" : res.pool.map(x => {
     const rr = Math.min(x.d, MAXKM) / MAXKM * RAD, b = bearing(casa, COMUNI[x.w.comune]) + (x.w.id % 7 - 3) * .05;
-    const px = 300 + Math.sin(b) * Math.max(rr, 14), py = 300 - Math.cos(b) * Math.max(rr, 14);
-    const st = r.proposte[x.w.id];
-    const sel = selWorker === x.w.id ? " sel" : "";
-    if (!x.ok && !st) return `<g class="w-dot${sel}" data-w="${x.w.id}" tabindex="0" role="button" aria-label="${esc(x.w.nome)}, escluso: ${esc(x.motivi[0].t)}">
-        <circle class="core" cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="5" fill="none" stroke="#4A5A66" stroke-width="1.5"/></g>`;
-    const cc = col(st);
-    return `<g class="w-dot${sel}" data-w="${x.w.id}" tabindex="0" role="button" aria-label="${esc(x.w.nome)}, ${fmtKm(x.d)}">
-      <circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="15" fill="${cc}" opacity=".16"/>
-      <circle class="core" cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="7" fill="${cc}"/></g>`;
+    const px = (300 + Math.sin(b) * Math.max(rr, 16)).toFixed(1), py = (300 - Math.cos(b) * Math.max(rr, 16)).toFixed(1);
+    const st = r.proposte[x.w.id], sel = selWorker === x.w.id ? " sel" : "";
+    if (!x.ok && !st) return `<g class="w-dot${sel}" data-w="${x.w.id}" tabindex="0" role="button" aria-label="${esc(x.w.nome)}, escluso: ${esc(x.motivi[0].t)}"><circle class="core" cx="${px}" cy="${py}" r="5" fill="none" stroke="#4A5A66" stroke-width="1.5"/></g>`;
+    const cc = colore(st);
+    return `<g class="w-dot${sel}" data-w="${x.w.id}" tabindex="0" role="button" aria-label="${esc(x.w.nome)}, ${fmtKm(x.d)}"><circle cx="${px}" cy="${py}" r="15" fill="${cc}" opacity=".16"/><circle class="core" cx="${px}" cy="${py}" r="7" fill="${cc}"/></g>`;
   }).join("");
-  const conf = Object.values(r.proposte).filter(v => v === "si").length;
   const perMotivo = k => res.esclusi.filter(x => x.motivi.some(m => m.k === k)).length;
+  const esclusiTxt = [["abil","abilitazioni scadute o mancanti"],["dist","troppo lontani"],["turno","turno non compatibile"],["disp","non disponibili o già impegnati"]]
+    .map(([k, t]) => perMotivo(k) ? perMotivo(k) + " " + t : "").filter(Boolean).join(", ");
   $("#center").innerHTML = `
     <div class="center-head">
       <p class="t">${esc(MANSIONI[r.mansione].nome)} × ${r.n} per ${esc(c.nome)}</p>
-      <div class="s">${esc(c.comune)} · ${QUANDO[r.quando]}, ${TURNI[r.turno].toLowerCase()} · ${esc(r.durata)} · richiede ${MANSIONI[r.mansione].req.map(a => ABIL[a].toLowerCase()).join(" e ")}</div>
+      <div class="s"><span class="tipo">${TIPI[r.tipo].nome}</span>${esc(c.comune)} · ${quandoTxt(r)}, ${TURNI[r.turno].toLowerCase()} · ${esc(r.durata)} · richiede ${MANSIONI[r.mansione].req.map(a => ABIL[a].toLowerCase()).join(" e ")}</div>
     </div>
+    ${r.stato === "da_approvare" ? `<div class="approve-box"><p><b>Richiesta arrivata dal portale di ${esc(c.nome)}.</b> Controlla i dati e approvala: solo dopo il sistema cerca i lavoratori e il cliente vede la ricerca avanzare.</p>
+      <button class="btn primary" id="btnApprova">Approva e cerca</button></div>` : ""}
     <div class="scope-wrap">
       <svg class="scope" viewBox="0 0 600 600" role="img" aria-label="Radar dei lavoratori attorno a ${esc(c.nome)}">
         <defs><linearGradient id="sw" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#00E5FF" stop-opacity=".22"/><stop offset="1" stop-color="#00E5FF" stop-opacity="0"/></linearGradient></defs>
@@ -360,204 +457,330 @@ function disegnaCentro(){
         <g class="sweep"><path d="M300 300 L570 300 A270 270 0 0 0 491 109 Z" fill="url(#sw)"/></g>
         ${dots}
         <rect x="288" y="288" width="24" height="24" rx="5" fill="#00E5FF"/>
-        <text x="300" y="276" text-anchor="middle" fill="#9FEFFA" font-size="18" font-weight="600" font-family="Inter, sans-serif">${esc(c.nome)}</text>
+        <text x="300" y="342" text-anchor="middle" fill="#9FEFFA" font-size="18" font-weight="600" font-family="Inter, sans-serif">${esc(c.nome)}</text>
       </svg>
     </div>
-    <div class="legend">
-      <span><i style="background:#00E5FF"></i>Compatibile</span>
-      <span><i style="background:var(--wait)"></i>Proposta inviata</span>
-      <span><i style="background:var(--ok)"></i>Disponibile</span>
-      <span><i style="border:1.5px solid #6B7B88"></i>Escluso o non disponibile</span>
-    </div>
-    <div class="stats">
+    <div class="legend"><span><i style="background:#00E5FF"></i>Compatibile</span><span><i style="background:#FFB020"></i>Proposta inviata</span><span><i style="background:#34D399"></i>${TIPI[r.tipo].si}</span><span><i style="border:1.5px solid #6B7B88"></i>Escluso</span></div>
+    ${r.stato === "da_approvare" ? "" : `<div class="stats">
       <div class="stat"><b>${res.pool.length}</b><span>fanno questa mansione</span></div>
       <div class="stat"><b>${res.ok.length}</b><span>compatibili adesso</span></div>
-      <div class="stat"><b>${conf} / ${r.n}</b><span>confermati</span></div>
-    </div>
-    ${res.esclusi.length ? `<div class="escl"><b>${res.esclusi.length} esclusi in automatico:</b> ${[
-      ["abil","abilitazioni scadute o mancanti"],["dist","troppo lontani"],["turno","turno non compatibile"],["disp","non disponibili o già impegnati"]
-    ].map(([k, t]) => perMotivo(k) ? perMotivo(k) + " " + t : "").filter(Boolean).join(", ")}. Nessuno di loro riceve la proposta.</div>` : ""}
-  `;
+      <div class="stat"><b>${coperti(r)} / ${r.n}</b><span>${r.tipo === "selezione" ? "assunti" : "confermati"}</span></div></div>
+    ${res.esclusi.length ? `<div class="escl"><b>${res.esclusi.length} esclusi in automatico:</b> ${esclusiTxt}. Nessuno di loro riceve la proposta.</div>` : ""}`}`;
 }
 
-/* ---------- Pannello laterale ---------- */
 function disegnaLato(){
-  if (mode === "new") return disegnaForm();
-  const r = req(), res = risultati(r), c = CLIENTI[r.cliente];
-  const conf = Object.values(r.proposte).filter(v => v === "si").length;
-  const statoLab = {inviata:"In attesa", si:"Disponibile", no:"Non disponibile", chiusa:"Posizione coperta"};
-  const inviati = Object.keys(r.proposte).map(Number);
-  const giaContattati = inviati.map(id => res.pool.find(x => x.w.id === id) || {w:WORKERS.find(w => w.id === id), d:km(COMUNI[WORKERS.find(w => w.id === id).comune], COMUNI[c.comune]), motivi:[]});
+  const r = R(selReq); if (!r){ $("#side").innerHTML = ""; return; }
+  if (r.stato === "da_approvare"){ $("#side").innerHTML = `<h2>Dati della richiesta</h2><div class="card">${riepilogo(r, true)}</div>`; return; }
+  const res = risultati(r), c = CLIENTI[r.cliente], T = TIPI[r.tipo];
+  const stLab = {inviata:"In attesa", si:T.si, no:T.no, chiusa:"Posizione coperta"};
+  const contattati = Object.keys(r.proposte).map(Number).map(id => res.pool.find(x => x.w.id === id) || {w:W(id), d:km(COMUNI[W(id).comune], COMUNI[c.comune])});
   const liberi = res.ok.filter(x => !(x.w.id in r.proposte));
-  const mancano = r.n - conf;
-  const lista = r.stato === "ricerca" ? [...giaContattati, ...liberi] : giaContattati;
-  if (r.stato === "ricerca" && !r._sel) r._sel = new Set(liberi.slice(0, Math.min(liberi.length, mancano * 2)).map(x => x.w.id));
+  const mancano = Math.max(1, r.n - coperti(r));
+  const lista = r.stato === "ricerca" ? [...contattati, ...liberi] : contattati;
+  if (r.stato === "ricerca" && !r._sel) r._sel = new Set(liberi.slice(0, Math.min(liberi.length, mancano * (r.tipo === "selezione" ? 4 : 2))).map(x => x.w.id));
   const rows = lista.map(x => {
-    const st = r.proposte[x.w.id], m = x.w.mansioni[r.mansione];
+    const st = r.proposte[x.w.id], anni = x.w.mansioni[r.mansione];
     const check = r.stato === "ricerca" && !st ? `<input type="checkbox" data-pick="${x.w.id}" ${r._sel.has(x.w.id) ? "checked" : ""} aria-label="Includi ${esc(x.w.nome)}">` : "<span></span>";
-    return `<div class="w${selWorker === x.w.id ? " sel" : ""}">
-      ${check}
+    let destra = `<span class="state ${st || "pronto"}">${st ? stLab[st] : "Compatibile"}</span>`;
+    if (r.tipo === "selezione" && st === "si"){
+      const f = r.fasi[x.w.id] || "interessato";
+      destra = r.stato === "coperta"
+        ? `<span class="state ${f === "assunto" ? "si" : "chiusa"}">${FASI.find(y => y[0] === f)[1]}</span>`
+        : `<select data-fase="${x.w.id}" aria-label="Fase di ${esc(x.w.nome)}">${FASI.map(([k, t]) => `<option value="${k}" ${k === f ? "selected" : ""}>${t}</option>`).join("")}</select>`;
+    }
+    return `<div class="w${selWorker === x.w.id ? " sel" : ""}">${check}
       <div><button class="n" data-w="${x.w.id}">${esc(x.w.nome)}</button>
-        <div class="d">${x.d < 1 ? "Stesso comune" : fmtKm(x.d) + " da " + esc(x.w.comune)} · ${m} ${m === 1 ? "anno" : "anni"} di esperienza · risponde in ~${x.w.rispMin} min</div></div>
-      <span class="state ${st || "pronto"}">${st ? statoLab[st] : "Compatibile"}</span>
-    </div>`;
+        <div class="d">${x.d < 1 ? "Stesso comune" : fmtKm(x.d) + " da " + esc(x.w.comune)} · ${anni} ${anni === 1 ? "anno" : "anni"} di esperienza · risponde in ~${x.w.rispMin} min</div></div>
+      ${destra}</div>`;
   }).join("");
-
-  let head = "", actions = "";
+  let head, actions;
   if (r.stato === "ricerca"){
-    head = `<div class="panel-title"><h2>Lavoratori compatibili</h2><span class="progress">${conf ? conf + " di " + r.n + " confermati" : liberi.length}</span></div>`;
-    actions = liberi.length ? `<div class="actions"><button class="btn primary" id="btnInvia" ${r._sel.size ? "" : "disabled"}>Invia proposta a ${r._sel.size}</button>
-      <button class="btn" id="btnTutti">Seleziona tutti</button></div>
-      <p class="info" style="margin:-8px 0 14px">Ordinati per vicinanza, esperienza e velocità di risposta. Già selezionati i primi ${Math.min(liberi.length, mancano * 2)}.</p>` : "";
+    head = `<div class="panel-title"><h2>Lavoratori compatibili</h2><span class="progress">${coperti(r) ? coperti(r) + " di " + r.n : liberi.length}</span></div>`;
+    actions = liberi.length ? `<div class="actions"><button class="btn primary" id="btnInvia" ${r._sel.size ? "" : "disabled"}>Invia proposta a ${r._sel.size}</button><button class="btn" id="btnTutti">Seleziona tutti</button></div>
+      <p class="info" style="margin:-8px 0 14px">Ordinati per ${r.tipo === "urgente" ? "vicinanza, esperienza" : "esperienza, vicinanza"} e velocità di risposta.</p>` : "";
+  } else if (r.stato === "in_corso"){
+    head = `<div class="panel-title"><h2>Risposte</h2><span class="progress">${coperti(r)} di ${r.n} ${r.tipo === "selezione" ? "assunti" : "confermati"}</span></div>`;
+    actions = r.tipo === "selezione"
+      ? `<p class="info" style="margin:0 0 14px">Per chi si candida, aggiorna la fase. Il cliente vede i candidati da "Presentato al cliente" in poi.</p>`
+      : `<p class="timer" id="timer">In attesa di risposta · <b>${Math.floor((Date.now() - r.t0) / 1000)} min</b> <span class="info">(simulazione: 1 secondo = 1 minuto)</span></p>`;
   } else {
-    const elapsed = r.stato === "coperta" ? r.tempo : Math.floor((Date.now() - r.t0) / 1000);
-    head = `<div class="panel-title"><h2>Risposte</h2><span class="progress">${conf} di ${r.n} confermati</span></div>`;
-    actions = r.stato === "coperta"
-      ? `<div class="done">Richiesta coperta in ${r.tempo} minuti. Il cliente è stato avvisato con i nomi confermati.</div>`
-      : `<p class="timer" id="timer">In attesa di risposta · <b>${elapsed} min</b> trascorsi <span class="info">(simulazione accelerata: 1 secondo = 1 minuto)</span></p>`;
+    head = `<div class="panel-title"><h2>Risposte</h2><span class="progress">${coperti(r)} di ${r.n}</span></div>`;
+    actions = `<div class="done">${r.tipo === "selezione" ? "Selezione chiusa: candidato assunto." : "Richiesta coperta in " + r.tempo + " minuti."} Il cliente lo vede nel suo portale.</div>`;
   }
-  $("#side").innerHTML = `${head}${actions}${rows || `<div class="empty">Nessun lavoratore compatibile. Prova a spostare la data o il turno.</div>`}
+  $("#side").innerHTML = `${head}${actions}${rows || `<div class="empty">Nessun lavoratore compatibile. Prova un altro turno o un'altra data.</div>`}
     <h2 style="margin-top:22px">Cosa riceve il lavoratore</h2>${telefono(r)}`;
 }
 
+function testoProposta(r, w){
+  const c = CLIENTI[r.cliente], d = km(COMUNI[w.comune], COMUNI[c.comune]);
+  const dove = `${esc(c.nome)}, ${esc(c.comune)} (${d < 1 ? "vicino a te" : fmtKm(d) + " da te"})`;
+  const nota = r.note ? "<br>" + esc(r.note) : "";
+  if (r.tipo === "selezione") return `la Filiale di Biella sta selezionando per un'<b>assunzione diretta</b>:<br><b>${esc(MANSIONI[r.mansione].nome)}</b> da ${dove}.<br>${esc(r.durata)}, inizio ${quandoTxt(r).toLowerCase()}.${nota}<br>Se ti interessa, ti chiamiamo per un colloquio.`;
+  if (r.tipo === "missione") return `la Filiale di Biella ti propone una missione:<br><b>${esc(MANSIONI[r.mansione].nome)}</b> da ${dove}.<br>Inizio ${quandoTxt(r).toLowerCase()}, durata ${esc(r.durata)}, turno ${TURNI[r.turno].toLowerCase()}.${nota}`;
+  return `la Filiale di Biella ti propone un lavoro:<br><b>${esc(MANSIONI[r.mansione].nome)}</b> da ${dove}.<br>${quandoTxt(r)}, turno ${TURNI[r.turno].toLowerCase()}, ${esc(r.durata)}.${nota}`;
+}
 function telefono(r){
-  const c = CLIENTI[r.cliente];
   const res = risultati(r);
   const id = selWorker ?? (Object.keys(r.proposte)[0] ? +Object.keys(r.proposte)[0] : res.ok[0]?.w.id);
-  const w = WORKERS.find(x => x.id === id);
-  if (!w) return `<div class="empty">Seleziona un lavoratore per vedere il messaggio.</div>`;
-  const d = km(COMUNI[w.comune], COMUNI[c.comune]);
-  const st = r.proposte[w.id];
-  const risposte = {si:"Disponibile", no:"Non disponibile"};
+  const w = W(id); if (!w) return `<div class="empty">Seleziona un lavoratore per vedere il messaggio.</div>`;
+  const st = r.proposte[w.id], T = TIPI[r.tipo];
   const nota = !st ? "Anteprima: il messaggio parte quando invii la proposta."
-    : st === "inviata" ? "Tocca un pulsante per rispondere al posto di " + w.nome.split(" ")[0] + "."
+    : st === "inviata" ? "Rispondi qui al posto di " + w.nome.split(" ")[0] + ", oppure dalla vista Lavoratore."
     : st === "chiusa" ? "Posizione già coperta: riceve un messaggio di ringraziamento." : "Risposta registrata.";
-  return `<div class="phone" aria-label="Anteprima del messaggio per ${esc(w.nome)}">
-    <div class="notch"></div>
-    <div class="who">Messaggio a ${esc(w.nome)}</div>
-    <div class="bubble">Ciao ${esc(w.nome.split(" ")[0])}, la Filiale di Biella ti propone un lavoro:<br>
-      <b>${esc(MANSIONI[r.mansione].nome)}</b> da ${esc(c.nome)}, ${esc(c.comune)} (${d < 1 ? "vicino a te" : fmtKm(d) + " da te"}).<br>
-      ${QUANDO[r.quando]}, turno ${TURNI[r.turno].toLowerCase()}, ${esc(r.durata)}.${r.note ? "<br>" + esc(r.note) : ""}</div>
-    ${st === "chiusa" ? `<div class="bubble" style="margin-top:8px">La posizione è stata coperta, grazie per la disponibilità. Ti scriviamo alla prossima occasione.</div>` : ""}
-    ${st === "si" || st === "no" ? `<div class="reply">${risposte[st]}</div>` : ""}
-    <div class="ans"><button class="yes" data-risp="si" data-w="${w.id}" ${st === "inviata" ? "" : "disabled"}>Disponibile</button>
-      <button data-risp="no" data-w="${w.id}" ${st === "inviata" ? "" : "disabled"}>Non disponibile</button></div>
+  return `<div class="phone"><div class="notch"></div><div class="who">Messaggio a ${esc(w.nome)}</div>
+    <div class="bubble">Ciao ${esc(w.nome.split(" ")[0])}, ${testoProposta(r, w)}</div>
+    ${st === "chiusa" ? `<div class="bubble" style="margin-top:8px">La posizione è stata coperta, grazie. Ti scriviamo alla prossima occasione.</div>` : ""}
+    ${st === "si" || st === "no" ? `<div class="reply">${st === "si" ? T.si : T.no}</div>` : ""}
+    <div class="ans"><button class="yes" data-risp="si" data-rq="${r.id}" data-w="${w.id}" ${st === "inviata" ? "" : "disabled"}>${T.si}</button>
+      <button data-risp="no" data-rq="${r.id}" data-w="${w.id}" ${st === "inviata" ? "" : "disabled"}>${T.no}</button></div>
   </div><p class="phone-note">${nota}</p>`;
 }
 
-/* ---------- Nuova richiesta ---------- */
+/* ================= Modulo nuova richiesta (agenzia e azienda) ================= */
 function segBtns(name, opts, val){
   return `<div class="seg" role="group">${opts.map(([v, t]) => `<button type="button" data-seg="${name}" data-v="${v}" aria-pressed="${String(v) === String(val)}">${t}</button>`).join("")}</div>`;
 }
-function disegnaForm(){
-  const m = MANSIONI[draft.mansione], c = CLIENTI[draft.cliente];
-  $("#side").innerHTML = `<div class="panel-title"><h2>Nuova richiesta urgente</h2></div>
+function disegnaForm(target, perAzienda){
+  if (perAzienda) draft.cliente = azienda;
+  const T = TIPI[draft.tipo], m = MANSIONI[draft.mansione], c = CLIENTI[draft.cliente];
+  if (!T.quando.some(q => q[0] === draft.quando)) draft.quando = T.quando[0][0];
+  if (!T.durate.includes(draft.durata)) draft.durata = T.durate[0];
+  $(target).innerHTML = `
+  <div class="panel-title"><h2>${perAzienda ? "Chiedi personale alla Filiale di Biella" : "Nuova richiesta"}</h2></div>
   <div class="form">
-    <div class="f"><label for="fCliente">Azienda cliente</label>
+    ${perAzienda ? "" : `<div class="f"><label for="fCliente">Azienda cliente</label>
       <select id="fCliente">${Object.entries(CLIENTI).map(([k, v]) => `<option value="${k}" ${k === draft.cliente ? "selected" : ""}>${esc(v.nome)}</option>`).join("")}</select>
-      <div class="info" style="margin-top:4px">${esc(c.settore)}, sede a ${esc(c.comune)}</div></div>
+      <div class="info" style="margin-top:4px">${esc(c.settore)}, sede a ${esc(c.comune)}</div></div>`}
+    <div class="f"><span class="lb">Tipo di ricerca</span>${segBtns("tipo", Object.entries(TIPI).map(([k, v]) => [k, v.nome]), draft.tipo)}
+      <div class="info" style="margin-top:4px">${T.desc}</div></div>
     <div class="f"><label for="fMansione">Mansione</label>
       <select id="fMansione">${Object.entries(MANSIONI).map(([k, v]) => `<option value="${k}" ${k === draft.mansione ? "selected" : ""}>${esc(v.nome)}</option>`).join("")}</select>
       <div class="chips">${m.req.map(a => `<span class="chip">${esc(ABIL[a])}</span>`).join("")}</div></div>
     <div class="f"><span class="lb">Quante persone</span>
-      <div class="step"><button type="button" id="meno" aria-label="Una persona in meno">−</button><output id="fN">${draft.n}</output><button type="button" id="piu" aria-label="Una persona in più">+</button></div></div>
-    <div class="f"><span class="lb">Quando</span>${segBtns("quando", QUANDO.map((q, i) => [i, q]), draft.quando)}</div>
+      <div class="stepper"><button type="button" id="meno" aria-label="Una persona in meno">−</button><output>${draft.n}</output><button type="button" id="piu" aria-label="Una persona in più">+</button></div></div>
+    <div class="f"><span class="lb">${draft.tipo === "urgente" ? "Quando" : "Inizio"}</span>${segBtns("quando", T.quando, draft.quando)}</div>
     <div class="f"><span class="lb">Turno</span>${segBtns("turno", Object.entries(TURNI), draft.turno)}</div>
-    <div class="f"><span class="lb">Durata</span>${segBtns("durata", DURATE.map(d => [d, d]), draft.durata)}</div>
+    <div class="f"><span class="lb">${draft.tipo === "selezione" ? "Contratto" : "Durata"}</span>${segBtns("durata", T.durate.map(d => [d, d]), draft.durata)}</div>
     <div class="f"><label for="fNote">Note per il lavoratore</label><textarea id="fNote" placeholder="Orario di arrivo, dove presentarsi, cosa portare">${esc(draft.note)}</textarea></div>
-    <div class="actions" style="margin:4px 0 0"><button class="btn primary" id="btnCerca">Cerca lavoratori</button><button class="btn" id="btnAnnulla">Annulla</button></div>
+    <div class="actions" style="margin:4px 0 0"><button class="btn primary" id="btnCerca" data-az="${perAzienda ? 1 : 0}">${perAzienda ? "Invia alla filiale" : "Cerca lavoratori"}</button><button class="btn" id="btnAnnulla" data-az="${perAzienda ? 1 : 0}">Annulla</button></div>
+    ${perAzienda ? `<p class="info">La filiale riceve la richiesta, la controlla e avvia la ricerca. Qui vedrai lo stato in tempo reale.</p>` : ""}
   </div>`;
 }
 
-/* ---------- Invio proposte e risposte simulate ---------- */
+/* ================= AZIENDA ================= */
+function riepilogo(r, perAgenzia){
+  return `<div class="person"><span>Mansione</span><b>${esc(MANSIONI[r.mansione].nome)} × ${r.n}</b></div>
+    <div class="person"><span>Tipo</span><b>${TIPI[r.tipo].nome}</b></div>
+    ${perAgenzia ? `<div class="person"><span>Cliente</span><b>${esc(CLIENTI[r.cliente].nome)}</b></div>` : ""}
+    <div class="person"><span>${r.tipo === "urgente" ? "Quando" : "Inizio"}</span><b>${quandoTxt(r)}</b></div>
+    <div class="person"><span>Turno</span><b>${TURNI[r.turno]}</b></div>
+    <div class="person"><span>${r.tipo === "selezione" ? "Contratto" : "Durata"}</span><b>${esc(r.durata)}</b></div>
+    ${r.note ? `<div class="person"><span>Note</span><span style="text-align:right">${esc(r.note)}</span></div>` : ""}`;
+}
+function disegnaAzienda(){
+  $("#selAz").innerHTML = Object.entries(CLIENTI).map(([k, v]) => `<option value="${k}" ${k === azienda ? "selected" : ""}>${esc(v.nome)}</option>`).join("");
+  const mie = REQS.filter(r => r.cliente === azienda);
+  if (!selReqAz || !mie.some(r => r.id === selReqAz)) selReqAz = mie[0]?.id || null;
+  $("#reqsAz").innerHTML = mie.length ? mie.map(r => schedaRichiesta(r, r.id === selReqAz && modeAz === "view", true)).join("")
+    : `<div class="empty">Nessuna richiesta. Usa "Chiedi personale" per la prima.</div>`;
+  if (modeAz === "new") return disegnaForm("#paneAz", true);
+  const r = R(selReqAz);
+  if (!r){ $("#paneAz").innerHTML = `<p class="big">Portale clienti di ${esc(CLIENTI[azienda].nome)}</p><p class="sub">Chiedi personale alla filiale in pochi secondi e segui la ricerca in tempo reale.</p>`; return; }
+  const T = TIPI[r.tipo], res = risultati(r), cop = coperti(r);
+  const fasi = ["Richiesta inviata","Approvata dalla filiale", r.tipo === "selezione" ? "Candidature e colloqui" : "Proposte inviate", r.tipo === "selezione" ? "Assunzione" : "Coperta"];
+  const idx = {da_approvare:0, ricerca:1, in_corso:2, coperta:3}[r.stato];
+  const nomi = r.tipo === "selezione" ? presentati(r) : Object.keys(r.proposte).filter(k => r.proposte[k] === "si").map(Number);
+  const msg = {
+    da_approvare:"La filiale ha ricevuto la richiesta e la sta controllando.",
+    ricerca:`La filiale sta preparando le proposte. In zona ci sono <b>${res.ok.length}</b> lavoratori compatibili con abilitazioni valide.`,
+    in_corso: r.tipo === "selezione" ? "La filiale sta raccogliendo le candidature e facendo i colloqui. Qui vedrai i candidati che ti presenta." : `Proposte inviate. Risposte attese ${T.attesa}.`,
+    coperta: r.tipo === "selezione" ? "Selezione conclusa." : `Richiesta coperta in ${r.tempo} minuti.`
+  }[r.stato];
+  $("#paneAz").innerHTML = `
+    <p class="big">${esc(MANSIONI[r.mansione].nome)} × ${r.n}</p>
+    <p class="sub"><span class="tipo">${T.nome}</span>${quandoTxt(r)}, ${TURNI[r.turno].toLowerCase()} · ${esc(r.durata)}</p>
+    <ol class="steps">${fasi.map((f, i) => `<li class="${i < idx || (i === 3 && idx === 3) ? "ok" : i === idx ? "on" : ""}">${f}</li>`).join("")}</ol>
+    <div class="card"><h3>${r.tipo === "selezione" ? "Assunti" : "Confermati"}: ${cop} di ${r.n}</h3>
+      <div class="bar" aria-hidden="true"><i style="width:${Math.round(cop / r.n * 100)}%"></i></div>
+      <p class="info" style="margin:6px 0 0">${msg}</p></div>
+    <div class="card"><h3>${r.tipo === "selezione" ? "Candidati presentati dalla filiale" : "Persone confermate"}</h3>
+      ${nomi.length ? nomi.map(id => { const w = W(id), f = r.fasi[id];
+        return `<div class="person"><span>${esc(w.nome)} · ${w.mansioni[r.mansione]} anni di esperienza</span><span class="state si">${r.tipo === "selezione" ? (f === "assunto" ? "Assunto" : "Da incontrare") : "Abilitazioni verificate"}</span></div>`; }).join("")
+        : `<p class="info" style="margin:0">I nomi compaiono qui quando le persone ${r.tipo === "selezione" ? "vengono presentate dalla filiale" : "confermano"}. Contatti e profili completi restano alla filiale.</p>`}
+    </div>
+    <div class="card"><h3>Dettagli della richiesta</h3>${riepilogo(r, false)}</div>`;
+}
+
+/* ================= LAVORATORE ================= */
+function disegnaLavoratore(){
+  const w = W(meId);
+  const mie = REQS.filter(r => r.proposte[w.id]);
+  const attesa = mie.filter(r => r.proposte[w.id] === "inviata");
+  const altre = mie.filter(r => r.proposte[w.id] !== "inviata");
+  const scad = g => g < 0 ? {c:"bad", t:"Scaduta da " + (-g) + " giorni"} : g < 60 ? {c:"warn", t:"Scade tra " + g + " giorni"} : g > 5000 ? {c:"", t:"Senza scadenza"} : {c:"", t:"Valida fino al " + new Date(Date.now() + g * 864e5).toLocaleDateString("it-IT")};
+  $("#paneLa").innerHTML = `
+    <div class="who-bar"><label for="selLa" class="info">Stai usando l'app come</label>
+      <select id="selLa">${WORKERS.map(x => `<option value="${x.id}" ${x.id === w.id ? "selected" : ""}>${esc(x.nome)} (${esc(x.comune)})</option>`).join("")}</select></div>
+    <p class="hello">Ciao ${esc(w.nome.split(" ")[0])}</p>
+    <p class="sub">${attesa.length ? `Hai ${attesa.length} ${attesa.length === 1 ? "proposta" : "proposte"} da guardare.` : "Nessuna proposta in attesa. Tieni aggiornata la disponibilità per riceverne."}</p>
+    ${attesa.map(r => `<div class="prop"><span class="tipo">${TIPI[r.tipo].nome}</span>
+      <h3>${esc(MANSIONI[r.mansione].nome)} · ${esc(CLIENTI[r.cliente].nome)}</h3>
+      <div class="info">${testoProposta(r, w)}</div>
+      <div class="ans"><button class="yes" data-risp="si" data-rq="${r.id}" data-w="${w.id}">${TIPI[r.tipo].si}</button><button data-risp="no" data-rq="${r.id}" data-w="${w.id}">${TIPI[r.tipo].no}</button></div></div>`).join("")}
+    <div class="card"><h3>Sei disponibile?</h3>
+      <div class="toggle" role="group" aria-label="Disponibilità">
+        <button data-disp="subito" aria-pressed="${w.disp === "subito"}">Disponibile da subito</button>
+        <button class="off" data-disp="no" aria-pressed="${w.disp === "no"}">Non disponibile</button>
+      </div>
+      <h3 style="margin-top:16px">Turni che puoi fare</h3>
+      <div class="toggle" role="group" aria-label="Turni">${Object.entries(TURNI).map(([k, t]) => `<button data-turno="${k}" aria-pressed="${w.turni.includes(k)}">${t}</button>`).join("")}</div>
+      <h3 style="margin-top:16px">Fino a quanti km ti sposti</h3>
+      <div class="stepper"><button type="button" data-km="-5" aria-label="5 km in meno">−</button><output>${w.maxKm} km</output><button type="button" data-km="5" aria-label="5 km in più">+</button></div>
+      <p class="info" style="margin:10px 0 0">Ogni modifica aggiorna subito le ricerche della filiale.</p>
+    </div>
+    <div class="card"><h3>Le tue abilitazioni</h3>
+      ${Object.entries(w.abil).map(([a, g]) => { const s = scad(g);
+        return `<div class="abil"><div><div>${esc(ABIL[a])}</div><div class="scad ${s.c}">${s.t}</div></div>
+          ${g < 60 ? `<button class="btn small" data-rinnova="${a}">Carica rinnovo</button>` : `<span class="state si">Verificata</span>`}</div>`; }).join("")}
+    </div>
+    <div class="card"><h3>Le tue mansioni</h3>
+      ${Object.entries(w.mansioni).map(([m, a]) => `<div class="person"><span>${esc(MANSIONI[m].nome)}</span><span>${a} ${a === 1 ? "anno" : "anni"}</span></div>`).join("")}
+    </div>
+    ${altre.length ? `<div class="card"><h3>Storico proposte</h3>${altre.map(r => { const st = r.proposte[w.id];
+      const lab = st === "si" ? TIPI[r.tipo].si : st === "no" ? TIPI[r.tipo].no : "Posizione coperta";
+      return `<div class="person"><span>${esc(MANSIONI[r.mansione].nome)} · ${esc(CLIENTI[r.cliente].nome)}</span><span class="state ${st === "si" ? "si" : "chiusa"}">${lab}</span></div>`; }).join("")}</div>` : ""}
+    <p class="info">L'azienda non vede il tuo profilo né i tuoi contatti: li riceve dalla filiale solo quando accetti una proposta.</p>`;
+}
+
+/* ================= Invio, risposte, fasi ================= */
 function inviaProposte(r){
   const ids = [...r._sel];
   ids.forEach(id => r.proposte[id] = "inviata");
-  if (r.stato === "ricerca" && !r.t0) r.t0 = Date.now();
+  if (!r.t0) r.t0 = Date.now();
   r.stato = "in_corso"; r._sel = null;
   ids.forEach(id => {
-    const w = WORKERS.find(x => x.id === id);
-    const ms = (w.rispMin * 0.8 + Math.random() * 5) * 1000;
+    if (id === meId) return; /* il lavoratore della vista Lavoratore risponde a mano */
+    const w = W(id), fattore = r.tipo === "urgente" ? 1 : 1.4;
+    const ms = (w.rispMin * 0.8 + Math.random() * 5) * 1000 * fattore;
     timers.push({req:r.id, w:id, h:setTimeout(() => rispondi(r.id, id, Math.random() < w.acc ? "si" : "no"), ms)});
   });
   selWorker = ids[0];
-  toast("Proposta inviata a " + ids.length + " lavoratori");
-  avviaOrologio();
-  tutto();
+  toast("Proposta inviata a " + ids.length + (ids.length === 1 ? " lavoratore" : " lavoratori"));
+  avviaOrologio(); aggiorna();
 }
 function rispondi(reqId, wid, risp){
-  const r = REQS.find(x => x.id === reqId);
-  if (!r || r.proposte[wid] !== "inviata") return;
+  const r = R(reqId); if (!r || r.proposte[wid] !== "inviata") return;
   timers = timers.filter(t => { if (t.req === reqId && t.w === wid){ clearTimeout(t.h); return false; } return true; });
   r.proposte[wid] = risp;
-  const w = WORKERS.find(x => x.id === wid);
-  const conf = Object.values(r.proposte).filter(v => v === "si").length;
-  if (risp === "si") toast(w.nome + " è disponibile (" + conf + " di " + r.n + ")");
-  if (conf >= r.n){
-    r.stato = "coperta"; r.tempo = Math.max(1, Math.floor((Date.now() - r.t0) / 1000));
+  if (risp === "si" && r.tipo === "selezione") r.fasi[wid] = "interessato";
+  if (risp === "si") toast(W(wid).nome + ": " + TIPI[r.tipo].si.toLowerCase() + (r.tipo === "selezione" ? "" : " (" + nSi(r) + " di " + r.n + ")"));
+  controllaChiusura(r);
+  aggiorna();
+}
+function controllaChiusura(r){
+  if (coperti(r) >= r.n){
+    r.stato = "coperta"; r.tempo = Math.max(1, Math.floor((Date.now() - (r.t0 || Date.now())) / 1000));
     Object.keys(r.proposte).forEach(k => { if (r.proposte[k] === "inviata") r.proposte[k] = "chiusa"; });
-    timers = timers.filter(t => { if (t.req === reqId){ clearTimeout(t.h); return false; } return true; });
-    toast("Richiesta coperta in " + r.tempo + " minuti");
-  } else if (!Object.values(r.proposte).includes("inviata")){
+    timers = timers.filter(t => { if (t.req === r.id){ clearTimeout(t.h); return false; } return true; });
+    toast(r.tipo === "selezione" ? "Selezione conclusa: il cliente è stato avvisato" : "Richiesta coperta in " + r.tempo + " minuti");
+  } else if (r.tipo !== "selezione" && !Object.values(r.proposte).includes("inviata")){
     r.stato = "ricerca"; r._sel = null;
-    toast("Mancano " + (r.n - conf) + " persone: invia ad altri compatibili");
+    toast("Mancano " + (r.n - coperti(r)) + " persone: invia ad altri compatibili");
   }
-  if (reqId === selReq) tutto(); else disegnaRichieste();
 }
 function avviaOrologio(){
   clearInterval(clock);
   clock = setInterval(() => {
-    const r = req(), el = $("#timer");
-    if (r && r.stato === "in_corso" && el && mode === "view") el.querySelector("b").textContent = Math.floor((Date.now() - r.t0) / 1000) + " min";
+    const r = R(selReq), el = $("#timer");
+    if (r && r.stato === "in_corso" && el && role === "agenzia") el.querySelector("b").textContent = Math.floor((Date.now() - r.t0) / 1000) + " min";
     if (!REQS.some(x => x.stato === "in_corso")) clearInterval(clock);
   }, 1000);
 }
 
-function tutto(){ disegnaRichieste(); if (mode === "view") disegnaCentro(); disegnaLato(); }
+/* ================= Navigazione ================= */
+function badge(id, n){ const b = $(id); b.hidden = !n; b.textContent = n; }
+function aggiorna(){
+  badge("#bAg", REQS.filter(r => r.stato === "da_approvare").length);
+  badge("#bLa", REQS.filter(r => r.proposte[meId] === "inviata").length);
+  if (role === "agenzia") disegnaAgenzia();
+  if (role === "azienda") disegnaAzienda();
+  if (role === "lavoratore") disegnaLavoratore();
+}
+function vai(nuovo){
+  role = nuovo;
+  document.querySelectorAll(".roles button").forEach(b => b.setAttribute("aria-selected", String(b.dataset.role === role)));
+  $("#vAgenzia").hidden = role !== "agenzia"; $("#vAzienda").hidden = role !== "azienda"; $("#vLavoratore").hidden = role !== "lavoratore";
+  window.scrollTo({top:0});
+  aggiorna();
+}
+function reset(){
+  timers.forEach(x => clearTimeout(x.h)); timers = []; clearInterval(clock);
+  caricaLavoratori(); REQS = seed(); selReq = "R-104"; selWorker = null; modeAg = "view"; modeAz = "view";
+  azienda = "elvo"; selReqAz = null; meId = 5; nextId = 105;
+}
+function salvaNote(){ const n = $("#fNote"); if (n) draft.note = n.value; }
 
-/* ---------- Eventi ---------- */
+/* ================= Eventi ================= */
 document.addEventListener("click", e => {
   const t = e.target;
+  const tab = t.closest("[data-role]"); if (tab) return vai(tab.dataset.role);
   const rq = t.closest("[data-req]");
-  if (rq){ selReq = rq.dataset.req; selWorker = null; mode = "view"; return tutto(); }
-  const risp = t.closest("[data-risp]");
-  if (risp){ return rispondi(selReq, +risp.dataset.w, risp.dataset.risp); }
+  if (rq){ if (rq.dataset.az === "1"){ selReqAz = rq.dataset.req; modeAz = "view"; } else { selReq = rq.dataset.req; selWorker = null; modeAg = "view"; } return aggiorna(); }
+  const risp = t.closest("[data-risp]"); if (risp) return rispondi(risp.dataset.rq, +risp.dataset.w, risp.dataset.risp);
   const wd = t.closest("[data-w]");
-  if (wd && mode === "view"){ selWorker = +wd.dataset.w; disegnaCentro(); return disegnaLato(); }
+  if (wd && role === "agenzia" && modeAg === "view"){ selWorker = +wd.dataset.w; disegnaCentro(); return disegnaLato(); }
   const pick = t.closest("[data-pick]");
-  if (pick){ const r = req(), id = +pick.dataset.pick; pick.checked ? r._sel.add(id) : r._sel.delete(id); return disegnaLato(); }
-  if (t.closest("#btnTutti")){ const r = req(); r._sel = new Set(risultati(r).ok.filter(x => !(x.w.id in r.proposte)).map(x => x.w.id)); return disegnaLato(); }
-  if (t.closest("#btnInvia")){ return inviaProposte(req()); }
-  if (t.closest("#btnNuova")){ mode = "new"; selWorker = null; disegnaRichieste(); disegnaForm(); $("#side").scrollIntoView({behavior:"smooth", block:"start"}); return; }
-  if (t.closest("#btnAnnulla")){ mode = "view"; return tutto(); }
+  if (pick){ const r = R(selReq), id = +pick.dataset.pick; pick.checked ? r._sel.add(id) : r._sel.delete(id); return disegnaLato(); }
+  if (t.closest("#btnTutti")){ const r = R(selReq); r._sel = new Set(risultati(r).ok.filter(x => !(x.w.id in r.proposte)).map(x => x.w.id)); return disegnaLato(); }
+  if (t.closest("#btnInvia")) return inviaProposte(R(selReq));
+  if (t.closest("#btnApprova")){ const r = R(selReq); r.stato = "ricerca"; r._sel = null; toast("Richiesta approvata: " + risultati(r).ok.length + " compatibili trovati"); return aggiorna(); }
+  if (t.closest("#btnNuova")){ modeAg = "new"; selWorker = null; aggiorna(); $("#side").scrollIntoView({behavior:"smooth", block:"start"}); return; }
+  if (t.closest("#btnNuovaAz")){ modeAz = "new"; draft.mansione = CLIENTI[azienda].mans; return aggiorna(); }
+  const ann = t.closest("#btnAnnulla");
+  if (ann){ if (ann.dataset.az === "1") modeAz = "view"; else modeAg = "view"; return aggiorna(); }
   const seg = t.closest("[data-seg]");
-  if (seg){ const k = seg.dataset.seg; draft[k] = k === "quando" ? +seg.dataset.v : seg.dataset.v; return disegnaForm(); }
-  if (t.closest("#meno")){ draft.n = Math.max(1, draft.n - 1); return disegnaForm(); }
-  if (t.closest("#piu")){ draft.n = Math.min(10, draft.n + 1); return disegnaForm(); }
-  if (t.closest("#btnCerca")){
-    draft.note = $("#fNote").value.trim();
-    const r = {id:"R-" + nextId++, cliente:draft.cliente, mansione:draft.mansione, n:draft.n, quando:draft.quando, turno:draft.turno, durata:draft.durata, note:draft.note, stato:"ricerca", proposte:{}, t0:null, tempo:null};
-    REQS.unshift(r); selReq = r.id; selWorker = null; mode = "view";
-    const n = risultati(r).ok.length;
-    toast(n ? n + " lavoratori compatibili trovati" : "Nessun compatibile: prova un altro turno o giorno");
-    tutto(); $("#center").scrollIntoView({behavior:"smooth", block:"start"});
-    return;
+  if (seg){ salvaNote(); const k = seg.dataset.seg; draft[k] = k === "quando" ? +seg.dataset.v : seg.dataset.v; return aggiorna(); }
+  if (t.closest("#meno")){ salvaNote(); draft.n = Math.max(1, draft.n - 1); return aggiorna(); }
+  if (t.closest("#piu")){ salvaNote(); draft.n = Math.min(10, draft.n + 1); return aggiorna(); }
+  const cerca = t.closest("#btnCerca");
+  if (cerca){
+    const perAz = cerca.dataset.az === "1";
+    salvaNote();
+    const r = {id:"R-" + nextId++, cliente: perAz ? azienda : draft.cliente, mansione:draft.mansione, n:draft.n, tipo:draft.tipo, quando:draft.quando,
+      turno:draft.turno, durata:draft.durata, note:draft.note.trim(), stato: perAz ? "da_approvare" : "ricerca", proposte:{}, fasi:{}, t0:null, tempo:null};
+    REQS.unshift(r); draft.note = "";
+    if (perAz){ selReqAz = r.id; modeAz = "view"; selReq = r.id; toast("Richiesta inviata alla filiale"); }
+    else { selReq = r.id; selWorker = null; modeAg = "view"; const n = risultati(r).ok.length; toast(n ? n + " lavoratori compatibili trovati" : "Nessun compatibile: prova un altro turno o un'altra data"); }
+    return aggiorna();
   }
-  if (t.closest("#btnReset")){
-    timers.forEach(x => clearTimeout(x.h)); timers = []; clearInterval(clock);
-    REQS = seed(); selReq = "R-104"; selWorker = null; mode = "view"; nextId = 105;
-    toast("Demo ricominciata"); return tutto();
-  }
+  const disp = t.closest("[data-disp]"); if (disp){ W(meId).disp = disp.dataset.disp; toast("Disponibilità aggiornata"); return aggiorna(); }
+  const tu = t.closest("[data-turno]");
+  if (tu){ const w = W(meId), k = tu.dataset.turno; w.turni = w.turni.includes(k) ? w.turni.replace(k, "") : w.turni + k; return aggiorna(); }
+  const kmb = t.closest("[data-km]"); if (kmb){ const w = W(meId); w.maxKm = Math.min(60, Math.max(5, w.maxKm + +kmb.dataset.km)); return aggiorna(); }
+  const rin = t.closest("[data-rinnova]");
+  if (rin){ W(meId).abil[rin.dataset.rinnova] = 1095; toast("Documento caricato: la filiale lo verifica. Nella demo è già valido."); return aggiorna(); }
+  if (t.closest("#btnReset")){ reset(); vai("agenzia"); toast("Demo ricominciata"); }
 });
 document.addEventListener("change", e => {
-  if (e.target.id === "fCliente"){ draft.cliente = e.target.value; draft.note = $("#fNote").value; disegnaForm(); }
-  if (e.target.id === "fMansione"){ draft.mansione = e.target.value; draft.note = $("#fNote").value; disegnaForm(); }
+  const id = e.target.id;
+  if (id === "fCliente"){ salvaNote(); draft.cliente = e.target.value; draft.mansione = CLIENTI[draft.cliente].mans; return aggiorna(); }
+  if (id === "fMansione"){ salvaNote(); draft.mansione = e.target.value; return aggiorna(); }
+  if (id === "selAz"){ azienda = e.target.value; selReqAz = null; modeAz = "view"; return aggiorna(); }
+  if (id === "selLa"){ meId = +e.target.value; return aggiorna(); }
+  const fase = e.target.closest && e.target.closest("[data-fase]");
+  if (fase){
+    const r = R(selReq), w = W(+fase.dataset.fase);
+    r.fasi[w.id] = fase.value;
+    if (fase.value === "presentato") toast(w.nome + " presentato: il cliente lo vede nel suo portale");
+    if (fase.value === "assunto") controllaChiusura(r);
+    return aggiorna();
+  }
 });
 document.addEventListener("keydown", e => {
-  if ((e.key === "Enter" || e.key === " ") && e.target.matches(".w-dot")){ e.preventDefault(); selWorker = +e.target.dataset.w; disegnaCentro(); disegnaLato(); }
+  if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches(".w-dot")){ e.preventDefault(); selWorker = +e.target.dataset.w; disegnaCentro(); disegnaLato(); }
 });
 
-tutto();
+reset(); aggiorna();
 </script>
 </body>
 </html>
